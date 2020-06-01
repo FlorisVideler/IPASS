@@ -1,5 +1,7 @@
 import pygame
 import random
+import time
+
 
 class Ship:
     start_x = 0
@@ -7,6 +9,7 @@ class Ship:
     end_x = 0
     end_y = 0
     length = None
+    hits = 0
 
     def __init__(self, length, board):
         self.cords = []
@@ -75,6 +78,7 @@ class Ship:
                 x, y = cord
                 self.board.data["shoot_grid"][f"{x};{y}"] = "ship"
             self.cords = new_cords
+
 
 class Board:
 
@@ -148,6 +152,10 @@ class Board:
     def hit(self, cord):
         for ship in self.ships:
             if cord in ship.cords:
+                ship.hits += 1
+                if ship.hits == ship.length:
+                    print(f"DESTROYED {ship.length}")
+                    self.ships.remove(ship)
                 return True
         return False
 
@@ -162,7 +170,6 @@ class Board:
                 self.data["shoot_grid"][f"{x};{y}"] = "miss"
             self.shots.append(cord)
             return True
-
 
 
 class PlayerBoard(Board):
@@ -194,18 +201,15 @@ class PlayerBoard(Board):
 
     def selector(self, newx, newy, oldx, oldy):
         if newx != oldx or newy != oldy:
-            #selector is verplaatst
+            # selector is verplaatst
             self.data["prev"]["plot_grid"][f"{newx};{newy}"] = self.data["plot_grid"][f"{newx};{newy}"]
             o = self.data["prev"]["plot_grid"][f"{oldx};{oldy}"]
             # print(f"putting {o} on the old spot")
             self.data["plot_grid"][f"{oldx};{oldy}"] = self.data["prev"]["plot_grid"][f"{oldx};{oldy}"]
             self.data["plot_grid"][f"{newx};{newy}"] = "select"
         else:
-            #selector is nog op zelfde plek
+            # selector is nog op zelfde plek
             pass
-
-
-
 
         # if self.data["prev"]["plot_grid"][f"{oldx};{oldy}"] != "select":
         #     self.data["prev"]["plot_grid"][f"{oldx};{oldy}"] = self.data["plot_grid"][f"{oldx};{oldy}"]
@@ -245,7 +249,6 @@ class PlayerBoard(Board):
                         newx = oldx + 1
 
 
-
 class AIBoard(Board):
     def __init__(self, ship_sizes):
         super().__init__(ship_sizes)
@@ -265,7 +268,6 @@ class AIBoard(Board):
         ship.cords = cords
         ship.cords = cords
 
-
     def random_cords(self, length):
         x = random.randrange(10)
         y = random.randrange(10)
@@ -273,13 +275,13 @@ class AIBoard(Board):
 
         cords = [[x, y]]
 
-        for i in range(length-1):
+        for i in range(length - 1):
             if r == 1:
-                #horizontal
-                cords.append([cords[i][0]+1, cords[i][1]])
+                # horizontal
+                cords.append([cords[i][0] + 1, cords[i][1]])
             else:
-                cords.append([cords[i][0], cords[i][1]+1])
-                #vert
+                cords.append([cords[i][0], cords[i][1] + 1])
+                # vert
         return cords
 
     def shoot(self, cord):
@@ -300,6 +302,7 @@ class Display:
         SCREEN_HEIGHT = 500
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Battleships")
+        self.texts = []
 
     def show(self, player_board):
         TILE_WIDTH = 40
@@ -320,9 +323,15 @@ class Display:
                 pygame.draw.rect(self.screen, data["colors"][plot_grid[f"{i - 12};{j}"]], tile)
         pygame.display.flip()
 
+    def show_text(self, text):
+        myfont = pygame.font.SysFont('Comic Sans MS', 30)
+        textsurface = myfont.render(text, True, (250, 250, 250))
+        self.screen.blit(textsurface, (0, 450))
+        self.texts.append(textsurface)
+
 
 class Game:
-    def __init__(self, display, ship_sizes=[6, 4, 3, 2]):
+    def __init__(self, display, ship_sizes=[6]):
         self.display = display
         self.player_board = PlayerBoard(ship_sizes, self.display)
         self.ai_board = AIBoard(ship_sizes)
@@ -336,8 +345,12 @@ class Game:
         cord = self.player_board.select_cord()
         if self.ai_board.shoot(cord):
             self.player_board.data["plot_grid"][f"{cord[0]};{cord[1]}"] = "hit"
+            pygame.mixer.music.load('hit.mp3')
+            pygame.mixer.music.play(0)
         else:
             self.player_board.data["plot_grid"][f"{cord[0]};{cord[1]}"] = "miss"
+            pygame.mixer.music.load('miss.mp3')
+            pygame.mixer.music.play(0)
 
     def play(self):
         self.display.show(self.player_board)
@@ -345,11 +358,21 @@ class Game:
         self.ai_board.place_ships()
         while True:
             self.player_shoot()
+            self.check_ships(self.ai_board, self.player_board)
             self.ai_shoot()
+            self.check_ships(self.ai_board, self.player_board)
             self.display.show(self.player_board)
+
+    def check_ships(self, ai_board, player_board):
+        if not ai_board.ships:
+            self.display.show_text("YOU WIN")
+        if not player_board.ships:
+            self.display.show_text("YOU LOSE")
+        pass
 
 
 if __name__ == "__main__":
+    clock = pygame.time.Clock()
     d = Display()
     game = Game(d)
     game.play()
