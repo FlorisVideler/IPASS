@@ -335,6 +335,7 @@ class Game:
         self.display = display
         self.player_board = PlayerBoard(ship_sizes, self.display)
         self.ai_board = AIBoard(ship_sizes)
+        self.game_over = False
 
     def ai_shoot(self):
         x, y = random.randrange(10), random.randrange(10)
@@ -356,7 +357,7 @@ class Game:
         self.display.show(self.player_board)
         self.player_board.place_ships()
         self.ai_board.place_ships()
-        while True:
+        while not self.game_over:
             self.player_shoot()
             self.check_ships(self.ai_board, self.player_board)
             self.ai_shoot()
@@ -368,7 +369,7 @@ class Game:
             self.display.show_text("YOU WIN")
         if not player_board.ships:
             self.display.show_text("YOU LOSE")
-        pass
+        self.game_over = True
 
 
 if __name__ == "__main__":
