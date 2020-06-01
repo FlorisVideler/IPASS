@@ -331,7 +331,7 @@ class Display:
 
 
 class Game:
-    def __init__(self, display, ship_sizes=[6]):
+    def __init__(self, display, ship_sizes=[6, 4, 3, 2]):
         self.display = display
         self.player_board = PlayerBoard(ship_sizes, self.display)
         self.ai_board = AIBoard(ship_sizes)
@@ -367,9 +367,10 @@ class Game:
     def check_ships(self, ai_board, player_board):
         if not ai_board.ships:
             self.display.show_text("YOU WIN")
+            self.game_over = True
         if not player_board.ships:
             self.display.show_text("YOU LOSE")
-        self.game_over = True
+            self.game_over = True
 
 
 if __name__ == "__main__":
@@ -377,3 +378,10 @@ if __name__ == "__main__":
     d = Display()
     game = Game(d)
     game.play()
+
+
+
+
+# BUGS:
+# AI ships overlap
+# cant select 0, 0
