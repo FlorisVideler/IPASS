@@ -296,15 +296,28 @@ class AIBoard(Board):
 
 class Display:
     def __init__(self):
+        self.text = "begin text"
         pygame.init()
-
+        self.RED = (255, 0, 0)
         SCREEN_WIDTH = 1000
         SCREEN_HEIGHT = 500
+        self.background = (0, 0, 0)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Battleships")
-        self.texts = []
+
+        text = 'this text is editable'
+        self.font = pygame.font.SysFont(None, 30)
+        self.img = self.font.render(text, True, self.RED)
+
+        self.rect = self.img.get_rect()
+        self.rect.topleft = (20, 420)
 
     def show(self, player_board):
+        img = self.font.render(self.text, True, self.RED)
+        self.rect.size = img.get_size()
+        self.rect.size = self.img.get_size()
+        self.screen.fill(self.background)
+        self.screen.blit(img, self.rect)
         TILE_WIDTH = 40
         TILE_HEIGHT = 40
 
@@ -321,13 +334,14 @@ class Display:
             for j in range(10):
                 tile = pygame.Rect(i * (TILE_WIDTH + 1), j * (TILE_HEIGHT + 1), TILE_WIDTH, TILE_HEIGHT)
                 pygame.draw.rect(self.screen, data["colors"][plot_grid[f"{i - 12};{j}"]], tile)
-        pygame.display.flip()
+        # pygame.display.flip()
+
+        pygame.display.update()
 
     def show_text(self, text):
         myfont = pygame.font.SysFont('Comic Sans MS', 30)
         textsurface = myfont.render(text, True, (250, 250, 250))
         self.screen.blit(textsurface, (0, 450))
-        self.texts.append(textsurface)
 
 
 class Game:
@@ -346,21 +360,28 @@ class Game:
         cord = self.player_board.select_cord()
         if self.ai_board.shoot(cord):
             self.player_board.data["plot_grid"][f"{cord[0]};{cord[1]}"] = "hit"
+            self.display.text = "HIT!"
             pygame.mixer.music.load('hit.mp3')
             pygame.mixer.music.play(0)
         else:
             self.player_board.data["plot_grid"][f"{cord[0]};{cord[1]}"] = "miss"
+            self.display.text = "MISS!"
             pygame.mixer.music.load('miss.mp3')
             pygame.mixer.music.play(0)
 
     def play(self):
         self.display.show(self.player_board)
+        self.display.text = "Set up your ships, you can move your ships with the arrow keys and rotate them with the r key"
         self.player_board.place_ships()
         self.ai_board.place_ships()
+        i = 0
         while not self.game_over:
+            # self.display.show_text(str(i))
+            self.display.text = "Use the arrow keys to choose where to attack"
             self.player_shoot()
             self.check_ships(self.ai_board, self.player_board)
             self.ai_shoot()
+            pygame.time.delay(2000)
             self.check_ships(self.ai_board, self.player_board)
             self.display.show(self.player_board)
 
@@ -385,3 +406,7 @@ if __name__ == "__main__":
 # BUGS:
 # AI ships overlap
 # cant select 0, 0
+
+
+# IDEAS:
+# Add title and under text to text function
