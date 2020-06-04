@@ -1,5 +1,6 @@
 import pygame
 import random
+import algortims
 import time
 
 
@@ -159,17 +160,20 @@ class Board:
                 return True
         return False
 
-    def shoot(self, cord):
+    def shot_available(self, cord):
         if cord in self.shots:
             return False
-        else:
-            x, y = cord
-            if self.hit(cord):
-                self.data["shoot_grid"][f"{x};{y}"] = "hit"
-            else:
-                self.data["shoot_grid"][f"{x};{y}"] = "miss"
-            self.shots.append(cord)
+        return True
+
+    def shoot(self, cord):
+        x, y = cord
+        self.shots.append(cord)
+        if self.hit(cord):
+            self.data["shoot_grid"][f"{x};{y}"] = "hit"
             return True
+        else:
+            self.data["shoot_grid"][f"{x};{y}"] = "miss"
+            return False
 
 
 class PlayerBoard(Board):
@@ -208,20 +212,6 @@ class PlayerBoard(Board):
             self.data["prev"]["plot_grid"][f"{newx};{newy}"] = self.data["plot_grid"][f"{newx};{newy}"]
             self.data["plot_grid"][f"{oldx};{oldy}"] = self.data["prev"]["plot_grid"][f"{oldx};{oldy}"]
             self.data["plot_grid"][f"{newx};{newy}"] = "select"
-        else:
-            # selector is nog op zelfde plek
-            pass
-
-        # if self.data["prev"]["plot_grid"][f"{oldx};{oldy}"] != "select":
-        #     self.data["prev"]["plot_grid"][f"{oldx};{oldy}"] = self.data["plot_grid"][f"{oldx};{oldy}"]
-        #
-        #
-        # if self.data["plot_grid"][f"{newx};{newy}"] != "select":
-        #     self.data["plot_grid"][f"{oldx};{oldy}"] = self.data["prev"]["plot_grid"][f"{oldx};{oldy}"]
-        #     print(self.data["plot_grid"][f"{oldx};{oldy}"])
-        #     self.data["prev"]["plot_grid"][f"{newx};{newy}"] = self.data["plot_grid"][f"{newx};{newy}"]
-        #     print(self.data["prev"]["plot_grid"][f"{newx};{newy}"])
-        # self.data["plot_grid"][f"{newx};{newy}"] = "select"
 
     def select_cord(self):
         newx = 0
@@ -350,8 +340,9 @@ class Game:
 
     def ai_shoot(self):
         x, y = random.randrange(10), random.randrange(10)
-        while not self.player_board.shoot([x, y]):
+        while not self.player_board.shot_available([x, y]):
             x, y = random.randrange(10), random.randrange(10)
+        result = self.player_board.shoot([x, y])
 
     def player_shoot(self):
         cord = self.player_board.select_cord()
@@ -398,8 +389,11 @@ if __name__ == "__main__":
     game.play()
 
 # BUGS:
-# cant select 0, 0
-
+# Ship placement is wrong. Ships can be placed in side one another (Maybe implement same system as with the guessing?)
 
 # IDEAS:
 # Add title and under text to text function
+# Beter waits between turns
+# Text: EX: "AI: G-13.... HIT!"
+# Add numbers and letters to the board 1, 10 and a, j
+
