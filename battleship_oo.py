@@ -199,12 +199,13 @@ class PlayerBoard(Board):
                     elif event.key == pygame.K_r:
                         ship.rotate()
 
-    def selector(self, newx, newy, oldx, oldy):
+    def selector(self, newx, newy, oldx, oldy, first=False):
+        if first:
+            self.data["prev"]["plot_grid"][f"0;0"] = self.data["plot_grid"][f"0;0"]
+            self.data["plot_grid"][f"0;0"] = "select"
         if newx != oldx or newy != oldy:
             # selector is verplaatst
             self.data["prev"]["plot_grid"][f"{newx};{newy}"] = self.data["plot_grid"][f"{newx};{newy}"]
-            o = self.data["prev"]["plot_grid"][f"{oldx};{oldy}"]
-            # print(f"putting {o} on the old spot")
             self.data["plot_grid"][f"{oldx};{oldy}"] = self.data["prev"]["plot_grid"][f"{oldx};{oldy}"]
             self.data["plot_grid"][f"{newx};{newy}"] = "select"
         else:
@@ -228,6 +229,7 @@ class PlayerBoard(Board):
         oldx = 0
         oldy = 0
         selected = False
+        self.selector(newx, newy, oldx, oldy, True)
         while not selected:
             if (newx > -1 and newx < 10) and (newy > -1 and newy < 10):
                 self.selector(newx, newy, oldx, oldy)
@@ -400,11 +402,7 @@ if __name__ == "__main__":
     game = Game(d)
     game.play()
 
-
-
-
 # BUGS:
-# AI ships overlap (Data is not updating)
 # cant select 0, 0
 
 
