@@ -376,7 +376,7 @@ class Game:
             self.player_shoot()
             self.check_ships(self.ai_board, self.player_board)
             self.ai_shoot()
-            # pygame.time.delay(2000)
+            pygame.time.delay(567)
             self.check_ships(self.ai_board, self.player_board)
             self.display.show(self.player_board)
 
@@ -407,5 +407,6 @@ if __name__ == "__main__":
 # Replace selector for outline or blinker
 # Add exit thingy
 # Add parity grid
+# Selector spawns near last shot
 
 

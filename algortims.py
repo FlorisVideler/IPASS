@@ -1,7 +1,7 @@
 import random
 
 
-class HuntTarget():
+class HuntTarget:
     def __init__(self, ships):
         self.potential_targets = []
         self.visited = []
@@ -43,10 +43,12 @@ class HuntTarget():
                 cord = self.hunt()
             if self.parity(cord):
                 break
-        try:
-            self.possible_targets.remove(cord)
-        except ValueError:
-            print(cord, "NOT IN LIST??")
+        if cord in self.parity_grid:
+            self.parity_grid.remove(cord)
+        # try:
+        self.possible_targets.remove(cord)
+        # except ValueError:
+        #     print(cord, "NOT IN LIST??")
         self.last_guess = cord
         return cord
 
