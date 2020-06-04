@@ -332,17 +332,20 @@ class Display:
 
 
 class Game:
-    def __init__(self, display, ship_sizes=[6, 4, 3, 2]):
+    def __init__(self, display, ship_sizes=[5, 4, 3, 2]):
         self.display = display
         self.player_board = PlayerBoard(ship_sizes, self.display)
         self.ai_board = AIBoard(ship_sizes)
         self.game_over = False
+        self.AI = algortims.HuntTarget()
 
     def ai_shoot(self):
-        x, y = random.randrange(10), random.randrange(10)
-        while not self.player_board.shot_available([x, y]):
-            x, y = random.randrange(10), random.randrange(10)
-        result = self.player_board.shoot([x, y])
+        cord = self.AI.turn()
+        self.AI.result = self.player_board.shoot(cord)
+        # x, y = random.randrange(10), random.randrange(10)
+        # while not self.player_board.shot_available([x, y]):
+        #     x, y = random.randrange(10), random.randrange(10)
+        # result = self.player_board.shoot([x, y])
 
     def player_shoot(self):
         cord = self.player_board.select_cord()
@@ -369,7 +372,7 @@ class Game:
             self.player_shoot()
             self.check_ships(self.ai_board, self.player_board)
             self.ai_shoot()
-            pygame.time.delay(2000)
+            # pygame.time.delay(2000)
             self.check_ships(self.ai_board, self.player_board)
             self.display.show(self.player_board)
 
@@ -388,12 +391,15 @@ if __name__ == "__main__":
     game = Game(d)
     game.play()
 
-# BUGS:
-# Ship placement is wrong. Ships can be placed in side one another (Maybe implement same system as with the guessing?)
+# BUGS: Ship placement is wrong. Ships can be placed in side one another (Maybe implement same system as with the
+# guessing / move the ships like this https://cliambrown.com/battleship/play.php?)
 
 # IDEAS:
 # Add title and under text to text function
 # Beter waits between turns
 # Text: EX: "AI: G-13.... HIT!"
 # Add numbers and letters to the board 1, 10 and a, j
+# Replace selector for outline or blinker
+# Add exit thingy
+# Replace lists with sets
 
