@@ -266,7 +266,7 @@ class AIBoard(Board):
             cords = self.random_cords(length)
         print(cords)
         ship.cords = cords
-        ship.cords = cords
+        ship.draw(cords)
 
     def random_cords(self, length):
         x = random.randrange(10)
@@ -404,7 +404,7 @@ if __name__ == "__main__":
 
 
 # BUGS:
-# AI ships overlap
+# AI ships overlap (Data is not updating)
 # cant select 0, 0
 
 
