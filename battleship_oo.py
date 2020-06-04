@@ -231,7 +231,7 @@ class PlayerBoard(Board):
         selected = False
         self.selector(newx, newy, oldx, oldy, True)
         while not selected:
-            if (newx > -1 and newx < 10) and (newy > -1 and newy < 10):
+            if (-1 < newx < 10) and (-1 < newy < 10):
                 self.selector(newx, newy, oldx, oldy)
                 self.display.show(self)
                 oldy = newy
@@ -256,11 +256,6 @@ class AIBoard(Board):
         super().__init__(ship_sizes)
 
     def place_ship(self, length):
-        cords = []
-        x = random.randrange(10)
-        y = random.randrange(10)
-        r = random.randrange(2)
-
         ship = Ship(length, self)
         self.ships.append(ship)
         cords = self.random_cords(length)
