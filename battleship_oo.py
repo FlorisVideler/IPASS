@@ -157,6 +157,7 @@ class Board:
                 if ship.hits == ship.length:
                     print(f"DESTROYED {ship.length}")
                     self.ships.remove(ship)
+                    return True, ship.length
                 return True
         return False
 
@@ -168,8 +169,11 @@ class Board:
     def shoot(self, cord):
         x, y = cord
         self.shots.append(cord)
-        if self.hit(cord):
+        hit = self.hit(cord)
+        if hit:
             self.data["shoot_grid"][f"{x};{y}"] = "hit"
+            if not isinstance(hit, bool):
+                return hit
             return True
         else:
             self.data["shoot_grid"][f"{x};{y}"] = "miss"
@@ -332,12 +336,12 @@ class Display:
 
 
 class Game:
-    def __init__(self, display, ship_sizes=[5, 4, 3, 2]):
+    def __init__(self, display, ship_sizes=[5,4,3,2]):
         self.display = display
         self.player_board = PlayerBoard(ship_sizes, self.display)
         self.ai_board = AIBoard(ship_sizes)
         self.game_over = False
-        self.AI = algortims.HuntTarget()
+        self.AI = algortims.HuntTarget(ship_sizes)
 
     def ai_shoot(self):
         cord = self.AI.turn()
@@ -393,6 +397,7 @@ if __name__ == "__main__":
 
 # BUGS: Ship placement is wrong. Ships can be placed in side one another (Maybe implement same system as with the
 # guessing / move the ships like this https://cliambrown.com/battleship/play.php?)
+# Out of bounds tiles can be selected
 
 # IDEAS:
 # Add title and under text to text function
@@ -401,5 +406,6 @@ if __name__ == "__main__":
 # Add numbers and letters to the board 1, 10 and a, j
 # Replace selector for outline or blinker
 # Add exit thingy
-# Replace lists with sets
+# Add parity grid
+
 
