@@ -336,7 +336,7 @@ class Display:
 
 
 class Game:
-    def __init__(self, display, ship_sizes=[5,4,3,2]):
+    def __init__(self, display, ship_sizes=[5, 4, 3, 3, 2]):
         self.display = display
         self.player_board = PlayerBoard(ship_sizes, self.display)
         self.ai_board = AIBoard(ship_sizes)
@@ -373,10 +373,13 @@ class Game:
         while not self.game_over:
             # self.display.show_text(str(i))
             self.display.text = "Use the arrow keys to choose where to attack"
-            self.player_shoot()
+            # self.player_shoot()
             self.check_ships(self.ai_board, self.player_board)
-            self.ai_shoot()
-            pygame.time.delay(567)
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        self.ai_shoot()
+            # pygame.time.delay(1000)
             self.check_ships(self.ai_board, self.player_board)
             self.display.show(self.player_board)
 
@@ -390,10 +393,11 @@ class Game:
 
 
 if __name__ == "__main__":
-    clock = pygame.time.Clock()
-    d = Display()
-    game = Game(d)
-    game.play()
+    while True:
+        clock = pygame.time.Clock()
+        d = Display()
+        game = Game(d)
+        game.play()
 
 # BUGS: Ship placement is wrong. Ships can be placed in side one another (Maybe implement same system as with the
 # guessing / move the ships like this https://cliambrown.com/battleship/play.php?)
