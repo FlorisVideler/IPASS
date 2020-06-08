@@ -116,6 +116,9 @@ class Board:
             for j in range(10):
                 self.data["prev"]["plot_grid"][f"{i};{j}"] = "tile"
 
+    # def set_ship_sizes(self, ship_sizes):
+    #     self.ship_sizes = ship_sizes
+
     def overlap_cords(self, ship, cords):
         if self.out_of_bounds(cords):
             return True
@@ -178,6 +181,11 @@ class Board:
         else:
             self.data["shoot_grid"][f"{x};{y}"] = "miss"
             return False
+
+    def reset(self):
+        for ship in self.ships:
+            del ship
+        self.ships.clear()
 
 
 class PlayerBoard(Board):
@@ -245,6 +253,7 @@ class PlayerBoard(Board):
                         newx = oldx + 1
 
 
+
 class AIBoard(Board):
     def __init__(self, ship_sizes):
         super().__init__(ship_sizes)
@@ -275,14 +284,14 @@ class AIBoard(Board):
                 # vert
         return cords
 
-    def shoot(self, cord):
-        x, y = cord
-        if self.hit(cord):
-            self.data["shoot_grid"][f"{x};{y}"] = "hit"
-            return True
-        else:
-            self.data["shoot_grid"][f"{x};{y}"] = "miss"
-            return False
+    # def shoot(self, cord):
+    #     x, y = cord
+    #     if self.hit(cord):
+    #         self.data["shoot_grid"][f"{x};{y}"] = "hit"
+    #         return True
+    #     else:
+    #         self.data["shoot_grid"][f"{x};{y}"] = "miss"
+    #         return False
 
 
 class Display:
@@ -303,10 +312,11 @@ class Display:
         self.rect = self.img.get_rect()
         self.rect.topleft = (20, 420)
 
-    def show(self, player_board, w = None, h = None):
+    def show(self, player_board, w=None, h=None):
         img = self.font.render(self.text, True, self.RED)
         self.rect.size = img.get_size()
         self.rect.size = self.img.get_size()
+        self.rect.topleft = (20, self.SCREEN_HEIGHT * 0.84)
         self.screen.fill(self.background)
         self.screen.blit(img, self.rect)
         TILE_WIDTH = self.screen.get_width() / 25
@@ -335,11 +345,8 @@ class Display:
             self.SCREEN_WIDTH = w
             self.SCREEN_HEIGHT = h
 
-        print(self.SCREEN_HEIGHT)
-
         self.screen = pygame.display.set_mode((w, h),
                                               pygame.RESIZABLE)
-
 
     def show_text(self, text):
         myfont = pygame.font.SysFont('Comic Sans MS', 30)
@@ -348,7 +355,7 @@ class Display:
 
 
 class Game:
-    def __init__(self, display, ship_sizes=[5]):
+    def __init__(self, display, ship_sizes=[6, 5, 4, 3]):
         self.display = display
         self.player_board = PlayerBoard(ship_sizes, self.display)
         self.ai_board = AIBoard(ship_sizes)
@@ -385,12 +392,14 @@ class Game:
         while not self.game_over:
             # self.display.show_text(str(i))
             self.display.text = "Use the arrow keys to choose where to attack"
-            # self.player_shoot()
+            self.player_shoot()
+            self.ai_shoot()
             self.check_ships(self.ai_board, self.player_board)
+
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
-                        self.ai_shoot()
+                        pass
 
                 if event.type == pygame.VIDEORESIZE:
                     # There's some code to add back window content here.
@@ -436,3 +445,6 @@ if __name__ == "__main__":
 # Add exit thingy
 # Add parity grid
 # Selector spawns near last shot
+# Better OO
+# Make input loop function
+# Add simulation mode

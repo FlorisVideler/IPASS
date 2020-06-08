@@ -116,7 +116,7 @@ class HuntTarget:
                 x = int(i.split(";")[0])
                 y = int(i.split(";")[1])
                 if [x, y] in self.possible_targets:
-                    print("REMOVING:", i, parity_data[i])
+                    # print("REMOVING:", i, parity_data[i])
                     self.possible_targets.remove([x, y])
             # for j in parity_data[i]:
             #     if parity_data[i][j]+1 < smallest_ship:
