@@ -18,7 +18,7 @@ class Simulation:
     def simulation_game_loop(self, run):
         AI = algortims.HuntTarget([5, 4, 3, 2])
         self.ai_board.reset()
-        print(self.sizes)
+        # print(self.sizes)
         self.ai_board.ship_sizes = [5, 4, 3, 2]
         self.ai_board.place_ships()
         game_over = False
@@ -29,7 +29,7 @@ class Simulation:
             if not self.ai_board.ships:
                 game_over = True
         self.add_result(run, turns)
-        print(turns)
+        # print(turns)
 
     def add_run(self, run):
         self.json_data[run] = {}
@@ -51,7 +51,7 @@ class Simulation:
         for i in range(1, times + 1):
             self.add_run(i)
             self.simulation_game_loop(i)
-            print(i)
+            # print(i)
         self.write_data()
         pass
 
@@ -65,7 +65,7 @@ def main():
 
     simulation = Simulation(ship_sizes)
     tic = time.perf_counter()
-    simulation.run(1000000)
+    simulation.run(10000)
     toc = time.perf_counter()
     print(f"Simulation ran in {toc - tic:0.4f} seconds")
 

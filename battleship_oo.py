@@ -158,7 +158,7 @@ class Board:
             if cord in ship.cords:
                 ship.hits += 1
                 if ship.hits == ship.length:
-                    print(f"DESTROYED {ship.length}")
+                    # print(f"DESTROYED {ship.length}")
                     self.ships.remove(ship)
                     return True, ship.length
                 return True
@@ -264,7 +264,7 @@ class AIBoard(Board):
         cords = self.random_cords(length)
         while self.overlap_cords(ship, cords):
             cords = self.random_cords(length)
-        print(cords)
+        # print(cords)
         ship.cords = cords
         ship.draw(cords)
 
