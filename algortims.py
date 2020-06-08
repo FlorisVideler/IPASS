@@ -211,3 +211,7 @@ class HuntTarget:
         return north, east, south, west
 
 
+# IDEAS:
+# Keep track of entire ships ( see "C:/Users/Floris%20Videler/Pictures/Aantekening%202020-06-08%20092556.png" why this is usefull)
+# Better target algorithm ( check what direction the ship is facing )
+# Devide hunt/target and prob algoritms

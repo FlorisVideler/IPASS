@@ -290,10 +290,10 @@ class Display:
         self.text = "begin text"
         pygame.init()
         self.RED = (255, 0, 0)
-        SCREEN_WIDTH = 1000
-        SCREEN_HEIGHT = 500
+        self.SCREEN_WIDTH = 1000
+        self.SCREEN_HEIGHT = 500
         self.background = (0, 0, 0)
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.RESIZABLE)
         pygame.display.set_caption("Battleships")
 
         text = 'this text is editable'
@@ -303,14 +303,14 @@ class Display:
         self.rect = self.img.get_rect()
         self.rect.topleft = (20, 420)
 
-    def show(self, player_board):
+    def show(self, player_board, w = None, h = None):
         img = self.font.render(self.text, True, self.RED)
         self.rect.size = img.get_size()
         self.rect.size = self.img.get_size()
         self.screen.fill(self.background)
         self.screen.blit(img, self.rect)
-        TILE_WIDTH = 40
-        TILE_HEIGHT = 40
+        TILE_WIDTH = self.screen.get_width() / 25
+        TILE_HEIGHT = self.screen.get_height() / 12.5
 
         data = player_board.data
 
@@ -326,8 +326,20 @@ class Display:
                 tile = pygame.Rect(i * (TILE_WIDTH + 1), j * (TILE_HEIGHT + 1), TILE_WIDTH, TILE_HEIGHT)
                 pygame.draw.rect(self.screen, data["colors"][plot_grid[f"{i - 12};{j}"]], tile)
         # pygame.display.flip()
-
         pygame.display.update()
+
+        if w is None or h is None:
+            w = self.SCREEN_WIDTH
+            h = self.SCREEN_HEIGHT
+        else:
+            self.SCREEN_WIDTH = w
+            self.SCREEN_HEIGHT = h
+
+        print(self.SCREEN_HEIGHT)
+
+        self.screen = pygame.display.set_mode((w, h),
+                                              pygame.RESIZABLE)
+
 
     def show_text(self, text):
         myfont = pygame.font.SysFont('Comic Sans MS', 30)
@@ -336,7 +348,7 @@ class Display:
 
 
 class Game:
-    def __init__(self, display, ship_sizes=[6, 4, 4, 3, 3, 3, 2, 2, 2, 2]):
+    def __init__(self, display, ship_sizes=[5]):
         self.display = display
         self.player_board = PlayerBoard(ship_sizes, self.display)
         self.ai_board = AIBoard(ship_sizes)
@@ -379,9 +391,21 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         self.ai_shoot()
+
+                if event.type == pygame.VIDEORESIZE:
+                    # There's some code to add back window content here.
+                    # print("eventwidth:", event.w, "| eventheight:", event.h)
+                    width = event.w
+                    height = int(width / 2)
+                    # print("width:", width, "| height:", height)
+                    self.check_ships(self.ai_board, self.player_board)
+                    self.display.show(self.player_board, width, height)
+                else:
+                    self.check_ships(self.ai_board, self.player_board)
+                    self.display.show(self.player_board)
             # pygame.time.delay(1000)
-            self.check_ships(self.ai_board, self.player_board)
-            self.display.show(self.player_board)
+            # self.check_ships(self.ai_board, self.player_board)
+            # self.display.show(self.player_board)
 
     def check_ships(self, ai_board, player_board):
         if not ai_board.ships:
@@ -412,5 +436,3 @@ if __name__ == "__main__":
 # Add exit thingy
 # Add parity grid
 # Selector spawns near last shot
-
-
