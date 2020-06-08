@@ -336,7 +336,7 @@ class Display:
 
 
 class Game:
-    def __init__(self, display, ship_sizes=[5, 4, 3, 3, 2]):
+    def __init__(self, display, ship_sizes=[6, 4, 4, 3, 3, 3, 2, 2, 2, 2]):
         self.display = display
         self.player_board = PlayerBoard(ship_sizes, self.display)
         self.ai_board = AIBoard(ship_sizes)
