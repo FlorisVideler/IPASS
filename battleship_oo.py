@@ -71,7 +71,13 @@ class Ship:
         self.update_position(new_cords, True)
 
     def update_position(self, new_cords, rotate=False):
-        if not self.board.overlap_cords(self, new_cords, rotate):
+        overlap = self.board.overlap_cords(self, new_cords, rotate)
+        if not isinstance(overlap, bool):
+            new_cords = overlap[1]
+            overlap = False
+
+        if not overlap:
+
             for cord in self.cords:
                 x, y = cord
                 self.board.data["shoot_grid"][f"{x};{y}"] = "tile"
@@ -122,15 +128,46 @@ class Board:
     def overlap_cords(self, ship, cords, rotate=False):
         if self.out_of_bounds(cords):
             return True
-
         # Remove the first cord if an rotation is being made, this will always be itself.
         if rotate:
             cords = cords[1:]
+        overlap = False
         for cord in cords:
             x, y = cord
             if self.data["shoot_grid"][f"{x};{y}"] == "ship":
                 other_ship = self.get_ship([x, y])
-                return self.overlap(ship, other_ship)
+                if self.overlap(ship, other_ship):
+                    overlap = True
+                    break
+        if overlap:
+            #print("OVERLAP")
+            deltax = abs(ship.cords[0][0] - cords[0][0])
+            deltay = abs(ship.cords[0][1] - cords[0][1])
+            new_cords = []
+            if deltax > deltay:
+                # Left or right
+                if ship.cords[0][0] > cords[0][0]:
+                    for cord in cords:
+                        x, y = cord
+                        new_cords.append([x - 1, y])
+                else:
+                    for cord in cords:
+                        x, y = cord
+                        new_cords.append([x + 1, y])
+            else:
+                # Up or down
+                if ship.cords[0][1] > cords[0][1]:
+                    # UP
+                    for cord in cords:
+                        x, y = cord
+                        new_cords.append([x, y - 1])
+                else:
+                    # Down
+                    for cord in cords:
+                        x, y = cord
+                        new_cords.append([x, y + 1])
+            #print(False, new_cords)
+            return False, new_cords
         return False
 
     def out_of_bounds(self, cords):
