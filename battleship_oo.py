@@ -68,10 +68,10 @@ class Ship:
             for i in range(0, self.length - 1):
                 x, y = new_cords[i][0] + 1, new_cords[i][1]
                 new_cords.append([x, y])
-        self.update_position(new_cords)
+        self.update_position(new_cords, True)
 
-    def update_position(self, new_cords):
-        if not self.board.overlap_cords(self, new_cords):
+    def update_position(self, new_cords, rotate=False):
+        if not self.board.overlap_cords(self, new_cords, rotate):
             for cord in self.cords:
                 x, y = cord
                 self.board.data["shoot_grid"][f"{x};{y}"] = "tile"
@@ -119,9 +119,13 @@ class Board:
     # def set_ship_sizes(self, ship_sizes):
     #     self.ship_sizes = ship_sizes
 
-    def overlap_cords(self, ship, cords):
+    def overlap_cords(self, ship, cords, rotate=False):
         if self.out_of_bounds(cords):
             return True
+
+        # Remove the first cord if an rotation is being made, this will always be itself.
+        if rotate:
+            cords = cords[1:]
         for cord in cords:
             x, y = cord
             if self.data["shoot_grid"][f"{x};{y}"] == "ship":
@@ -144,6 +148,12 @@ class Board:
     def overlap(self, ship, other_ship):
         if ship != other_ship:
             return True
+        return False
+
+    def overlap_cord_ship(self, cords, ship):
+        for cord in cords:
+            if cord in ship.cords:
+                return True
         return False
 
     def place_ships(self):

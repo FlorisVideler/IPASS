@@ -58,6 +58,7 @@ class HuntTarget:
         try:
             self.possible_targets.remove(cord)
         except ValueError:
+            # WORDT NOG STEEDS IN POTENTIAL TARGETS GEZET!
             print(cord, "NOT IN LIST??")
         self.last_guess = cord
         return cord
