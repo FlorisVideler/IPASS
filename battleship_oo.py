@@ -73,11 +73,17 @@ class Ship:
     def update_position(self, new_cords, rotate=False):
         overlap = self.board.overlap_cords(self, new_cords, rotate)
         if not isinstance(overlap, bool):
-            new_cords = overlap[1]
-            overlap = False
+            while overlap:
+                new_cords = overlap[1]
+                overlap = self.board.overlap_cords(self, new_cords, rotate)
+                if not isinstance(overlap, bool):
+                    new_cords = overlap[1]
+                if not overlap:
+                    break
+                if overlap == True:
+                    break
 
         if not overlap:
-
             for cord in self.cords:
                 x, y = cord
                 self.board.data["shoot_grid"][f"{x};{y}"] = "tile"
@@ -140,7 +146,7 @@ class Board:
                     overlap = True
                     break
         if overlap:
-            #print("OVERLAP")
+            # print("OVERLAP")
             deltax = abs(ship.cords[0][0] - cords[0][0])
             deltay = abs(ship.cords[0][1] - cords[0][1])
             new_cords = []
@@ -166,7 +172,8 @@ class Board:
                     for cord in cords:
                         x, y = cord
                         new_cords.append([x, y + 1])
-            #print(False, new_cords)
+            # print(False, new_cords)
+            # if not self.overlap_cords(ship, new_cords):
             return False, new_cords
         return False
 
@@ -300,7 +307,6 @@ class PlayerBoard(Board):
                         newx = oldx + 1
 
 
-
 class AIBoard(Board):
     def __init__(self, ship_sizes):
         super().__init__(ship_sizes)
@@ -402,7 +408,7 @@ class Display:
 
 
 class Game:
-    def __init__(self, display, ship_sizes=[6, 5, 4, 3]):
+    def __init__(self, display, ship_sizes=[2, 2]):
         self.display = display
         self.player_board = PlayerBoard(ship_sizes, self.display)
         self.ai_board = AIBoard(ship_sizes)
