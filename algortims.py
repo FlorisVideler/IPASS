@@ -4,7 +4,7 @@ class Algorithm:
     def __init__(self, ships):
         pass
 
-class HuntTarget:
+class OldHuntTarget:
     def __init__(self, ships):
         self.potential_targets = []
         self.visited = []
@@ -213,6 +213,49 @@ class HuntTarget:
             west += 1
 
         return north, east, south, west
+
+class HuntTarget:
+    def __init__(self, ships):
+        self.result = None
+        self.possible_targets = []
+        self.last_guess = None
+        self.potential_targets = []
+        for i in range(10):
+            for j in range(10):
+                self.possible_targets.append([i, j])
+
+    def turn(self):
+        if self.result:
+            self.potential_targets.extend(self.get_surrounding(self.last_guess))
+        if self.potential_targets:
+            cord = self.target()
+        else:
+            cord = self.hunt()
+        self.last_guess = cord
+        return cord
+
+
+    def hunt(self):
+        cord = random.choice(self.possible_targets)
+        self.possible_targets.remove(cord)
+        return cord
+
+    def target(self):
+        return self.potential_targets.pop()
+
+    def get_surrounding(self, cord):
+        surroundings = []
+        x, y = cord
+        if x + 1 < 10 and [x + 1, y] in self.possible_targets and [x + 1, y] not in self.potential_targets:
+            surroundings.append([x + 1, y])
+        if x - 1 > -1 and [x - 1, y] in self.possible_targets and [x - 1, y] not in self.potential_targets:
+            surroundings.append([x - 1, y])
+        if y + 1 < 10 and [x, y + 1] in self.possible_targets and [x, y + 1] not in self.potential_targets:
+            surroundings.append([x, y + 1])
+        if y - 1 > -1 and [x, y - 1] in self.possible_targets and [x, y - 1] not in self.potential_targets:
+            surroundings.append([x, y - 1])
+        return surroundings
+
 
 class HuntTargetParity:
     pass
