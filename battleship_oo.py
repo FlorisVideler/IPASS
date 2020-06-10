@@ -128,9 +128,6 @@ class Board:
             for j in range(10):
                 self.data["prev"]["plot_grid"][f"{i};{j}"] = "tile"
 
-    # def set_ship_sizes(self, ship_sizes):
-    #     self.ship_sizes = ship_sizes
-
     def overlap_cords(self, ship, cords, rotate=False):
         if self.out_of_bounds(cords):
             return True
@@ -281,6 +278,16 @@ class PlayerBoard(Board):
             self.data["plot_grid"][f"{oldx};{oldy}"] = self.data["prev"]["plot_grid"][f"{oldx};{oldy}"]
             self.data["plot_grid"][f"{newx};{newy}"] = "select"
 
+    def selector_click(self, position):
+        rects = self.display.rects
+        for rect in rects:
+            if rect.collidepoint(position):
+                index = rects.index(rect)
+                cord_string = list(self.data["plot_grid"].keys())[index]
+                cord = [int(cord_string.split(";")[0]), int(cord_string.split(";")[1])]
+                return cord
+        pass
+
     def select_cord(self):
         newx = 0
         newy = 0
@@ -307,6 +314,10 @@ class PlayerBoard(Board):
                         newx = oldx - 1
                     elif event.key == pygame.K_RIGHT:
                         newx = oldx + 1
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pos = pygame.mouse.get_pos()
+                    cord = self.selector_click(pos)
+                    return cord
 
 
 class AIBoard(Board):
@@ -351,6 +362,7 @@ class AIBoard(Board):
 
 class Display:
     def __init__(self):
+        self.rects = []
         self.text = "begin text"
         pygame.init()
         self.RED = (255, 0, 0)
@@ -376,20 +388,25 @@ class Display:
         self.screen.blit(img, self.rect)
         TILE_WIDTH = self.screen.get_width() / 25
         TILE_HEIGHT = self.screen.get_height() / 12.5
+        SPACE = self.screen.get_height() / 500
 
         data = player_board.data
 
         shoot_grid = data["shoot_grid"]
         plot_grid = data["plot_grid"]
 
+        self.rects.clear()
+
         for i in range(10):
             for j in range(10):
-                tile = pygame.Rect(i * (TILE_WIDTH + 1), j * (TILE_HEIGHT + 1), TILE_WIDTH, TILE_HEIGHT)
+                tile = pygame.Rect(i * (TILE_WIDTH + SPACE), j * (TILE_HEIGHT + SPACE), TILE_WIDTH, TILE_HEIGHT)
                 pygame.draw.rect(self.screen, data["colors"][shoot_grid[f"{i};{j}"]], tile)
         for i in range(12, 22):
             for j in range(10):
-                tile = pygame.Rect(i * (TILE_WIDTH + 1), j * (TILE_HEIGHT + 1), TILE_WIDTH, TILE_HEIGHT)
+                tile = pygame.Rect(i * (TILE_WIDTH + SPACE), j * (TILE_HEIGHT + SPACE), TILE_WIDTH, TILE_HEIGHT)
                 pygame.draw.rect(self.screen, data["colors"][plot_grid[f"{i - 12};{j}"]], tile)
+                self.rects.append(tile)
+
         # pygame.display.flip()
         pygame.display.update()
 
