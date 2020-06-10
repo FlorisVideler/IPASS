@@ -232,13 +232,12 @@ class HuntTarget:
         else:
             cord = self.hunt()
         self.last_guess = cord
+        self.possible_targets.remove(cord)
         return cord
 
 
     def hunt(self):
-        cord = random.choice(self.possible_targets)
-        self.possible_targets.remove(cord)
-        return cord
+        return random.choice(self.possible_targets)
 
     def target(self):
         return self.potential_targets.pop()
@@ -258,7 +257,60 @@ class HuntTarget:
 
 
 class HuntTargetParity:
-    pass
+    def __init__(self, ships):
+        self.result = None
+        self.possible_targets = []
+        self.last_guess = None
+        self.potential_targets = []
+        for i in range(10):
+            for j in range(10):
+                self.possible_targets.append([i, j])
+        self.parity_grid = []
+        for i in range(10):
+            if i % 2 == 0:
+                for j in range(1, 10, 2):
+                    self.parity_grid.append([i, j])
+            else:
+                for j in range(0, 10, 2):
+                    self.parity_grid.append([i, j])
+
+    def turn(self):
+        if self.result:
+            self.potential_targets.extend(self.get_surrounding(self.last_guess))
+        if self.potential_targets:
+            cord = self.target()
+        else:
+            cord = self.hunt()
+        self.possible_targets.remove(cord)
+        self.last_guess = cord
+        return cord
+
+    def hunt(self):
+        if self.parity_grid:
+            cord = random.choice(self.parity_grid)
+            while cord not in self.possible_targets:
+                cord = random.choice(self.parity_grid)
+            self.parity_grid.remove(cord)
+        else:
+            cord = random.choice(self.possible_targets)
+        return cord
+
+
+    def target(self):
+        return self.potential_targets.pop()
+
+    def get_surrounding(self, cord):
+        surroundings = []
+        x, y = cord
+        if x + 1 < 10 and [x + 1, y] in self.possible_targets and [x + 1, y] not in self.potential_targets:
+            surroundings.append([x + 1, y])
+        if x - 1 > -1 and [x - 1, y] in self.possible_targets and [x - 1, y] not in self.potential_targets:
+            surroundings.append([x - 1, y])
+        if y + 1 < 10 and [x, y + 1] in self.possible_targets and [x, y + 1] not in self.potential_targets:
+            surroundings.append([x, y + 1])
+        if y - 1 > -1 and [x, y - 1] in self.possible_targets and [x, y - 1] not in self.potential_targets:
+            surroundings.append([x, y - 1])
+        return surroundings
 
 class ProbabilityDensity:
     pass
