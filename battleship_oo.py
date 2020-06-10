@@ -145,6 +145,8 @@ class Board:
                 if self.overlap(ship, other_ship):
                     overlap = True
                     break
+        if rotate and overlap:
+            return True
         if overlap:
             # print("OVERLAP")
             deltax = abs(ship.cords[0][0] - cords[0][0])
