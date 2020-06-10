@@ -1,5 +1,8 @@
 import random
 
+class Algorithm:
+    def __init__(self, ships):
+        pass
 
 class HuntTarget:
     def __init__(self, ships):
@@ -211,6 +214,23 @@ class HuntTarget:
 
         return north, east, south, west
 
+class HuntTargetParity:
+    pass
+
+class ProbabilityDensity:
+    pass
+
+class Random:
+    def __init__(self):
+        self.possible_targets = []
+        for i in range(10):
+            for j in range(10):
+                self.possible_targets.append([i, j])
+
+    def turn(self):
+        cord = random.choice(self.possible_targets)
+        self.possible_targets.remove(cord)
+        return cord
 
 # IDEAS:
 # Keep track of entire ships ( see "C:/Users/Floris%20Videler/Pictures/Aantekening%202020-06-08%20092556.png" why this is usefull)
