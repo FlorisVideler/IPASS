@@ -325,15 +325,171 @@ class ProbabilityDensity:
         self.result = None
         self.possible_targets = []
         self.last_guess = None
+        self.hit_streak = []
         for i in range(10):
             for j in range(10):
                 self.possible_targets.append([i, j])
 
     def turn(self):
-        print(self.probability())
+
+        if self.result:
+            if not isinstance(self.result, bool):
+                self.ships.remove(self.result[1])
+            self.hit_streak.append(self.last_guess)
+        if self.hit_streak:
+            probabilities = self.hit_probabilties()
+        else:
+            probabilities = self.probability()
+        cord = list(probabilities.pop())
+        self.possible_targets.remove(cord)
+        self.last_guess = cord
+        return cord
+
+    def hit_probabilties(self):
         if not isinstance(self.result, bool):
-            self.ships.remove(self.result[1])
-        pass
+            if self.result[1] == len(self.hit_streak):
+                self.hit_streak.clear()
+                print("SHIP DESTOYYEEEDDDD")
+                return self.probability()
+        probability_tracker = {}
+        if len(self.hit_streak) == 1:
+            x, y = self.hit_streak[0]
+            directions = {
+                "north": 0,
+                "east": 0,
+                "south": 0,
+                "west": 0
+            }
+            for ship in self.ships:
+
+                for i in range(1, ship):
+                    if [x+1, y] in self.possible_targets:
+                        directions["east"] += 1
+                    if [x-1, y] in self.possible_targets:
+                        directions["west"] += 1
+                    if [x, y+1] in self.possible_targets:
+                        directions["south"] += 1
+                    if [x, y-1] in self.possible_targets:
+                        directions["north"] += 1
+            best_direction = max(directions, key=directions.get)
+            print(best_direction, directions)
+            if best_direction == "north":
+                return [[x, y-1]]
+            elif best_direction == "east":
+                return [[x+1, y]]
+            elif best_direction == "south":
+                return [[x, y+1]]
+            else:
+                return [[x-1, y]]
+        elif len(self.hit_streak) > 1:
+            horizontal = False
+            vertical = False
+            for i in range(1, len(self.hit_streak)):
+                prevx, prevy = self.hit_streak[i-1]
+                x, y = self.hit_streak[i]
+                if abs(x - prevx) != 0:
+                    horizontal = True
+                else:
+                    vertical = True
+            if horizontal and not vertical:
+                x, y = self.hit_streak[len(self.hit_streak)-1]
+                if [x+1, y] in self.possible_targets:
+                    return [[x+1, y]]
+                elif [x-1, y] in self.possible_targets:
+                    return [[x-1, y]]
+
+            if vertical and not horizontal:
+                x, y = self.hit_streak[len(self.hit_streak) - 1]
+                if [x, y+1] in self.possible_targets:
+                    return [[x, y+1]]
+                elif [x, y-1] in self.possible_targets:
+                    return [[x, y-1]]
+
+            if vertical and horizontal:
+                cord = random.choice(self.possible_targets)
+                return [[cord]]
+            else:
+                cord = random.choice(self.possible_targets)
+                return [[cord]]
+
+
+
+            # directions_tracker = {}
+            #
+            # for ship in self.ships:
+            #     x, y = self.hit_streak[0]
+            #     north_tracker = {}
+            #     east_tracker = {}
+            #     south_tracker = {}
+            #     west_tracker = {}
+            #     for i in range(1, ship):
+            #         if [x+i, y] in self.possible_targets:
+            #             if tuple([x+i, y]) not in east_tracker:
+            #                 east_tracker[tuple([x+i, y])] = 0
+            #             east_tracker[tuple([x+i, y])] += 1
+            #         else:
+            #             east_tracker.clear()
+            #         if [x-i, y] in self.possible_targets:
+            #             if tuple([x-i, y]) not in west_tracker:
+            #                 west_tracker[tuple([x-i, y])] = 0
+            #             west_tracker[tuple([x-i, y])] += 1
+            #         else:
+            #             west_tracker.clear()
+            #         if [x, y+i] in self.possible_targets:
+            #             if tuple([x, y+i]) not in south_tracker:
+            #                 south_tracker[tuple([x, y+i])] = 0
+            #             south_tracker[tuple([x, y+i])] += 1
+            #         else:
+            #             south_tracker.clear()
+            #         if [x, y-i] in self.possible_targets:
+            #             if tuple([x, y-i]) not in north_tracker:
+            #                 north_tracker[tuple([x, y-i])] = 0
+            #             north_tracker[tuple([x, y-i])] += 1
+            #         else:
+            #             north_tracker.clear()
+            #
+            #     for i in north_tracker.keys():
+            #         if i not in directions_tracker:
+            #             directions_tracker[i] = 0
+            #         directions_tracker[i] += north_tracker[i]
+            #     for i in east_tracker.keys():
+            #         if i not in directions_tracker:
+            #             directions_tracker[i] = 0
+            #         directions_tracker[i] += east_tracker[i]
+            #     for i in south_tracker.keys():
+            #         if i not in directions_tracker:
+            #             directions_tracker[i] = 0
+            #         directions_tracker[i] += south_tracker[i]
+            #     for i in west_tracker.keys():
+            #         if i not in directions_tracker:
+            #             directions_tracker[i] = 0
+            #         directions_tracker[i] += west_tracker[i]
+            #
+            # probability_tracker = directions_tracker
+            # sorted_tracker = {k: v for k, v in sorted(probability_tracker.items(), key=lambda item: item[1])}
+            # probability_tracker_list = [*sorted_tracker]
+            # return probability_tracker_list
+
+
+            # for ship in self.ships:
+            #     for tile in self.hit_streak:
+            #         # Check which direction the ships can go form the hit
+            #         x, y = tile
+            #         north = 0
+            #         east = 0
+            #         south = 0
+            #         west = 0
+            #         for i in range(1, ship):
+            #             if [x+i, y] in self.possible_targets:
+            #                 east += 1
+            #             if [x-i, y] in self.possible_targets:
+            #                 west += 1
+            #             if [x, y+1] in self.possible_targets:
+            #                 south += 1
+            #             if [x, y-1] in self.possible_targets:
+            #                 north += 1
+
+
 
     def probability(self):
         probability_tracker = {}
@@ -386,8 +542,11 @@ class ProbabilityDensity:
         for i in range(10):
             string = ""
             for j in range(10):
-                string += str(probability_tracker[j, i]) + "  "
-            print(string)
+                try:
+                    string += str(probability_tracker[j, i]) + "  "
+                except KeyError:
+                    string += "0  "
+            # print(string)
         sorted_tracker = {k: v for k, v in sorted(probability_tracker.items(), key=lambda item: item[1])}
         probability_tracker_list = [*sorted_tracker]
         return probability_tracker_list
