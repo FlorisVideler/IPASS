@@ -1,8 +1,10 @@
 import random
 
+
 class Algorithm:
     def __init__(self, ships):
         pass
+
 
 class OldHuntTarget:
     def __init__(self, ships):
@@ -75,7 +77,7 @@ class OldHuntTarget:
         #         break
         cord = random.choice(self.possible_targets)
         return cord
-        #return random.choice(self.possible_targets)
+        # return random.choice(self.possible_targets)
 
     def target(self):
         for i in self.potential_targets:
@@ -97,7 +99,6 @@ class OldHuntTarget:
                 cord = [int(i.split(";")[0]), int(i.split(";")[1])]
                 north, east, south, west = self.check_directions(cord, data)
 
-
                 parity_data[i] = {}
                 parity_data[i]["north"] = north
                 parity_data[i]["east"] = east
@@ -115,7 +116,8 @@ class OldHuntTarget:
 
         for i in parity_data:
             smaller = 0
-            if parity_data[i]["north"] + parity_data[i]["south"] + 1 < smallest_ship and parity_data[i]["east"] + parity_data[i]["west"] + 1 < smallest_ship:
+            if parity_data[i]["north"] + parity_data[i]["south"] + 1 < smallest_ship and parity_data[i]["east"] + \
+                    parity_data[i]["west"] + 1 < smallest_ship:
 
                 x = int(i.split(";")[0])
                 y = int(i.split(";")[1])
@@ -130,67 +132,65 @@ class OldHuntTarget:
 
         # print(parity_data)
 
+        # CHECK VOOR TILES NIET HIT OR MISS ZIJN
+        # if data[i] == "tile":
+        #     cord = i.split(";")
+        #     smaller_directions = 0
+        #     north, east, south, west = self.check_directions(cord, data)
+        #     # print(north, east, south, west)
+        #     smallest_ship = min(self.ships)
+        #     x = int(cord[0])
+        #     y = int(cord[1])
+        #     # SHOULD BE north + south
+        #     # NEE GRAPJE HET HAD ALLEEN +1 MOETEN ZIJN!!
+        #     if north + south + 1 < smallest_ship:
+        #         if [x, y - 1] in self.possible_targets and [x, y + 1] in self.possible_targets:
+        #             for j in range(1, north):
+        #                 print("REMOVING", [x, y - j])
+        #                 self.possible_targets.remove([x, y - j])
+        #             for j in range(1, south):
+        #                 print("REMOVING", [x, y+j])
+        #                 self.possible_targets.remove([x, y+j])
+        #             smaller_directions += 1
+        #
+        #     if east + west + 1 < smallest_ship:
+        #         if [x + 1, y] in self.possible_targets and [x - 1, y] in self.possible_targets:
+        #             for j in range(1, east):
+        #                 print("REMOVING", [x+j, y])
+        #                 self.possible_targets.remove([x+j, y])
+        #             for j in range(1, west):
+        #                 print("REMOVING", [x - j, y])
+        #                 self.possible_targets.remove([x - j, y])
+        #             smaller_directions += 1
 
-            # CHECK VOOR TILES NIET HIT OR MISS ZIJN
-            # if data[i] == "tile":
-            #     cord = i.split(";")
-            #     smaller_directions = 0
-            #     north, east, south, west = self.check_directions(cord, data)
-            #     # print(north, east, south, west)
-            #     smallest_ship = min(self.ships)
-            #     x = int(cord[0])
-            #     y = int(cord[1])
-            #     # SHOULD BE north + south
-            #     # NEE GRAPJE HET HAD ALLEEN +1 MOETEN ZIJN!!
-            #     if north + south + 1 < smallest_ship:
-            #         if [x, y - 1] in self.possible_targets and [x, y + 1] in self.possible_targets:
-            #             for j in range(1, north):
-            #                 print("REMOVING", [x, y - j])
-            #                 self.possible_targets.remove([x, y - j])
-            #             for j in range(1, south):
-            #                 print("REMOVING", [x, y+j])
-            #                 self.possible_targets.remove([x, y+j])
-            #             smaller_directions += 1
-            #
-            #     if east + west + 1 < smallest_ship:
-            #         if [x + 1, y] in self.possible_targets and [x - 1, y] in self.possible_targets:
-            #             for j in range(1, east):
-            #                 print("REMOVING", [x+j, y])
-            #                 self.possible_targets.remove([x+j, y])
-            #             for j in range(1, west):
-            #                 print("REMOVING", [x - j, y])
-            #                 self.possible_targets.remove([x - j, y])
-            #             smaller_directions += 1
-
-
-                # if north+1 < smallest_ship:
-                #     if [x, y-1] in self.possible_targets:
-                #         for j in range(1, north):
-                #             print("REMOVING NORTH", [x, y-j])
-                #             self.possible_targets.remove([x, y-j])
-                #         smaller_directions += 1
-                # if east+1 < smallest_ship:
-                #     if [x+1, y] in self.possible_targets:
-                #         for j in range(1, east):
-                #             print("REMOVING EAST", [x+j, y])
-                #             self.possible_targets.remove([x+j, y])
-                #         smaller_directions += 1
-                # if south+1 < smallest_ship:
-                #     if [x, y+1] in self.possible_targets:
-                #         for j in range(1, south):
-                #             print("REMOVING SOUTH", [x, y+j])
-                #             self.possible_targets.remove([x, y+j])
-                #         smaller_directions += 1
-                # if west+1 < smallest_ship:
-                #     if [x-1, y] in self.possible_targets:
-                #         for j in range(1, west):
-                #             print("REMOVING WEST", [x-j, y])
-                #             self.possible_targets.remove([x-j, y])
-                #         smaller_directions += 1
-                # if smaller_directions == 4:
-                #     print("REMOVING", [x, y])
-                #     if [x, y] in self.possible_targets:
-                #         self.possible_targets.remove([x, y])
+        # if north+1 < smallest_ship:
+        #     if [x, y-1] in self.possible_targets:
+        #         for j in range(1, north):
+        #             print("REMOVING NORTH", [x, y-j])
+        #             self.possible_targets.remove([x, y-j])
+        #         smaller_directions += 1
+        # if east+1 < smallest_ship:
+        #     if [x+1, y] in self.possible_targets:
+        #         for j in range(1, east):
+        #             print("REMOVING EAST", [x+j, y])
+        #             self.possible_targets.remove([x+j, y])
+        #         smaller_directions += 1
+        # if south+1 < smallest_ship:
+        #     if [x, y+1] in self.possible_targets:
+        #         for j in range(1, south):
+        #             print("REMOVING SOUTH", [x, y+j])
+        #             self.possible_targets.remove([x, y+j])
+        #         smaller_directions += 1
+        # if west+1 < smallest_ship:
+        #     if [x-1, y] in self.possible_targets:
+        #         for j in range(1, west):
+        #             print("REMOVING WEST", [x-j, y])
+        #             self.possible_targets.remove([x-j, y])
+        #         smaller_directions += 1
+        # if smaller_directions == 4:
+        #     print("REMOVING", [x, y])
+        #     if [x, y] in self.possible_targets:
+        #         self.possible_targets.remove([x, y])
 
     def check_directions(self, cord, data):
         north = 0
@@ -200,19 +200,24 @@ class OldHuntTarget:
 
         x, y = cord
 
-        while f"{x};{y-(north+1)}" in data and (data[f"{x};{y-(north+1)}"] == "tile" or data[f"{x};{y-(north+1)}"] == "hit"):
+        while f"{x};{y - (north + 1)}" in data and (
+                data[f"{x};{y - (north + 1)}"] == "tile" or data[f"{x};{y - (north + 1)}"] == "hit"):
             north += 1
 
-        while f"{x+(east+1)};{y}" in data and (data[f"{x+(east+1)};{y}"] == "tile" or data[f"{x+(east+1)};{y}"] == "hit"):
+        while f"{x + (east + 1)};{y}" in data and (
+                data[f"{x + (east + 1)};{y}"] == "tile" or data[f"{x + (east + 1)};{y}"] == "hit"):
             east += 1
 
-        while f"{x};{y+(south+1)}" in data and (data[f"{x};{y+(south+1)}"] == "tile" or data[f"{x};{y+(south+1)}"] == "hit"):
+        while f"{x};{y + (south + 1)}" in data and (
+                data[f"{x};{y + (south + 1)}"] == "tile" or data[f"{x};{y + (south + 1)}"] == "hit"):
             south += 1
 
-        while f"{x-(west+1)};{y}" in data and (data[f"{x-(west+1)};{y}"] == "tile" or data[f"{x-(west+1)};{y}"] == "hit"):
+        while f"{x - (west + 1)};{y}" in data and (
+                data[f"{x - (west + 1)};{y}"] == "tile" or data[f"{x - (west + 1)};{y}"] == "hit"):
             west += 1
 
         return north, east, south, west
+
 
 class HuntTarget:
     def __init__(self, ships):
@@ -234,7 +239,6 @@ class HuntTarget:
         self.last_guess = cord
         self.possible_targets.remove(cord)
         return cord
-
 
     def hunt(self):
         return random.choice(self.possible_targets)
@@ -295,7 +299,6 @@ class HuntTargetParity:
             cord = random.choice(self.possible_targets)
         return cord
 
-
     def target(self):
         return self.potential_targets.pop()
 
@@ -312,8 +315,86 @@ class HuntTargetParity:
             surroundings.append([x, y - 1])
         return surroundings
 
+
 class ProbabilityDensity:
-    pass
+    # Voor elk schip dat er nog is
+    #   Voor elke tile
+    #       Past schip? Tile prob ++
+    def __init__(self, ships):
+        self.ships = ships
+        self.result = None
+        self.possible_targets = []
+        self.last_guess = None
+        for i in range(10):
+            for j in range(10):
+                self.possible_targets.append([i, j])
+
+    def turn(self):
+        print(self.probability())
+        if not isinstance(self.result, bool):
+            self.ships.remove(self.result[1])
+        pass
+
+    def probability(self):
+        probability_tracker = {}
+        for ship in self.ships:
+            for tile in self.possible_targets:
+                # Horizontal
+                x, y = tile
+                horizontal_tile_tracker = {}
+                vertical_tile_tracker = {}
+
+                for i in range(ship):
+                    if [x+i, y] in self.possible_targets:
+                        if tuple([x+i, y]) not in horizontal_tile_tracker:
+                            horizontal_tile_tracker[tuple([x+i, y])] = 0
+                        horizontal_tile_tracker[tuple([x+i, y])] += 1
+                    else:
+                        horizontal_tile_tracker.clear()
+                    if [x, y+i] in self.possible_targets:
+                        if tuple([x, y+i]) not in vertical_tile_tracker:
+                            vertical_tile_tracker[tuple([x, y+i])] = 0
+                        vertical_tile_tracker[tuple([x, y+i])] += 1
+                    else:
+                        vertical_tile_tracker.clear()
+
+                for i in horizontal_tile_tracker.keys():
+                    if i not in probability_tracker:
+                        probability_tracker[i] = 0
+                    probability_tracker[i] += horizontal_tile_tracker[i]
+                for i in vertical_tile_tracker.keys():
+                    if i not in probability_tracker:
+                        probability_tracker[i] = 0
+                    probability_tracker[i] += vertical_tile_tracker[i]
+                #
+                #
+                #
+                # horizontal = 0
+                # vertical = 0
+                # for i in range(ship):
+                #     if [x+i, y] in self.possible_targets:
+                #         horizontal += 1
+                #     if [x, y+i] in self.possible_targets:
+                #         vertical += 1
+                # if tuple(tile) not in probability_tracker:
+                #     probability_tracker[tuple(tile)] = 0
+                # if horizontal == ship:
+                #     probability_tracker[tuple(tile)] += 1
+                # if vertical == ship:
+                #     probability_tracker[tuple(tile)] += 1
+        print(probability_tracker)
+        for i in range(10):
+            string = ""
+            for j in range(10):
+                string += str(probability_tracker[j, i]) + "  "
+            print(string)
+        sorted_tracker = {k: v for k, v in sorted(probability_tracker.items(), key=lambda item: item[1])}
+        probability_tracker_list = [*sorted_tracker]
+        return probability_tracker_list
+                #print(probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)])
+        #print(probability_tracker[(0,0)], probability_tracker[(1,0)], probability_tracker[(2,0)], probability_tracker[(3,0)], probability_tracker[(4,0)], probability_tracker[(5,0)], probability_tracker[(6,0)], probability_tracker[(7,0)], probability_tracker[(8,0)], probability_tracker[(9,0)])
+
+
 
 class Random:
     def __init__(self):

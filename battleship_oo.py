@@ -427,12 +427,12 @@ class Display:
 
 
 class Game:
-    def __init__(self, display, ship_sizes=[2, 2]):
+    def __init__(self, display, ship_sizes=[5, 4, 3, 3, 2]):
         self.display = display
         self.player_board = PlayerBoard(ship_sizes, self.display)
         self.ai_board = AIBoard(ship_sizes)
         self.game_over = False
-        self.AI = algortims.HuntTargetParity(ship_sizes)
+        self.AI = algortims.ProbabilityDensity(ship_sizes)
 
     def ai_shoot(self):
         cord = self.AI.turn()
