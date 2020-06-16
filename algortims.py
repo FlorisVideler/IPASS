@@ -261,6 +261,7 @@ class HuntTarget:
 
 
 class HuntTargetParity:
+    # SELECTEERD SOMS OUT OF BOUNDS CORDS
     def __init__(self, ships):
         self.result = None
         self.possible_targets = []
@@ -351,6 +352,9 @@ class ProbabilityDensity:
                 self.hit_streak.clear()
                 print("SHIP DESTOYYEEEDDDD")
                 return self.probability()
+
+
+
         probability_tracker = {}
         if len(self.hit_streak) == 1:
             x, y = self.hit_streak[0]
@@ -571,3 +575,4 @@ class Random:
 # Keep track of entire ships ( see "C:/Users/Floris%20Videler/Pictures/Aantekening%202020-06-08%20092556.png" why this is usefull)
 # Better target algorithm ( check what direction the ship is facing )
 # Devide hunt/target and prob algoritms
+# Make hit return bool, None/ship
