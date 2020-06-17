@@ -2,7 +2,7 @@ import random
 
 
 class Algorithm:
-    def __init__(self, ships):
+    def __init__(self, ships: list):
         self.possible_targets = []
         self.last_guess = None
         self.potential_targets = []
@@ -250,7 +250,7 @@ class OldHuntTarget:
 
 
 class HuntTarget(Algorithm):
-    def turn(self):
+    def turn(self) -> list:
         if self.result[0]:
             self.potential_targets.extend(self.get_surrounding(self.last_guess))
         if self.potential_targets:
@@ -261,34 +261,23 @@ class HuntTarget(Algorithm):
         self.possible_targets.remove(cord)
         return cord
 
-    def hunt(self):
+    def hunt(self) -> list:
         return random.choice(self.possible_targets)
 
-    def target(self):
+    def target(self) -> list:
         return self.potential_targets.pop()
 
-    def check_surrounding(self, cord):
+    def check_surrounding(self, cord: list) -> list:
         surroundings = self.get_surrounding(cord)
         for cord in surroundings:
             if cord in self.potential_targets:
                 surroundings.remove(cord)
-        # surroundings = []
-        # x, y = cord
-        # if x + 1 < 10 and [x + 1, y] in self.possible_targets and [x + 1, y] not in self.potential_targets:
-        #     surroundings.append([x + 1, y])
-        # if x - 1 > -1 and [x - 1, y] in self.possible_targets and [x - 1, y] not in self.potential_targets:
-        #     surroundings.append([x - 1, y])
-        # if y + 1 < 10 and [x, y + 1] in self.possible_targets and [x, y + 1] not in self.potential_targets:
-        #     surroundings.append([x, y + 1])
-        # if y - 1 > -1 and [x, y - 1] in self.possible_targets and [x, y - 1] not in self.potential_targets:
-        #     surroundings.append([x, y - 1])
         return surroundings
 
 
 class HuntTargetParity(Algorithm):
     # SELECTEERD SOMS OUT OF BOUNDS CORDS
-    def __init__(self, ships):
-        super().__init__(ships)
+    def __init__(self):
         self.parity_grid = []
         for i in range(10):
             if i % 2 == 0:
@@ -298,7 +287,7 @@ class HuntTargetParity(Algorithm):
                 for j in range(0, 10, 2):
                     self.parity_grid.append([i, j])
 
-    def turn(self):
+    def turn(self) -> list:
         if self.result[0]:
             self.potential_targets.extend(self.check_surrounding(self.last_guess))
         if self.potential_targets:
@@ -309,7 +298,7 @@ class HuntTargetParity(Algorithm):
         self.last_guess = cord
         return cord
 
-    def hunt(self):
+    def hunt(self) -> list:
         if self.parity_grid:
             cord = random.choice(self.parity_grid)
             while cord not in self.possible_targets:
@@ -319,10 +308,10 @@ class HuntTargetParity(Algorithm):
             cord = random.choice(self.possible_targets)
         return cord
 
-    def target(self):
+    def target(self) -> list:
         return self.potential_targets.pop()
 
-    def check_surrounding(self, cord):
+    def check_surrounding(self, cord: list) -> list:
         surroundings = self.get_surrounding(cord)
         for cord in surroundings:
             if cord in self.potential_targets:
@@ -338,8 +327,7 @@ class ProbabilityDensity(Algorithm):
         super().__init__(ships)
         self.hit_streak = []
 
-    def turn(self):
-
+    def turn(self) -> list:
         if self.result[0]:
             if self.result[1] > 0:
                 self.ships.remove(self.result[1])
@@ -355,7 +343,7 @@ class ProbabilityDensity(Algorithm):
         self.last_guess = cord
         return cord
 
-    def probability(self, hit):
+    def probability(self, hit: list) -> list:
         probability_tracker = {}
 
         probable_targets = self.possible_targets + self.hit_streak
@@ -420,7 +408,7 @@ class ProbabilityDensity(Algorithm):
 
 
 class Random(Algorithm):
-    def turn(self):
+    def turn(self) -> list:
         cord = random.choice(self.possible_targets)
         self.possible_targets.remove(cord)
         return cord

@@ -12,14 +12,14 @@ class Ship:
     length = None
     hits = 0
 
-    def __init__(self, length, board):
+    def __init__(self, length: int, board):
         self.cords = []
         self.end_x = length
         self.length = length
         self.cords = self.get_cords()
         self.board = board
 
-    def get_cords(self):
+    def get_cords(self) -> list:
         if self.end_x - self.start_x > 0:
             for i in range(self.start_x, self.end_x):
                 cord = [i, self.start_y]
@@ -30,7 +30,7 @@ class Ship:
                 self.cords.append(cord)
         return self.cords
 
-    def move(self, direction):
+    def move(self, direction: str):
         new_cords = []
         if direction == "up":
             for cord in self.cords:
@@ -50,7 +50,7 @@ class Ship:
                 new_cords.append([x - 1, y])
         self.update_position(new_cords)
 
-    def draw(self, cords):
+    def draw(self, cords: list):
         for cord in cords:
             x, y = cord
             self.board.data["shoot_grid"][f"{x};{y}"] = "ship"
@@ -70,7 +70,7 @@ class Ship:
                 new_cords.append([x, y])
         self.update_position(new_cords, True)
 
-    def update_position(self, new_cords, rotate=False):
+    def update_position(self, new_cords: list, rotate: bool = False):
         overlap = self.board.overlap_cords(self, new_cords, rotate)
         if not isinstance(overlap, bool):
             while overlap:
@@ -95,7 +95,7 @@ class Ship:
 
 class Board:
 
-    def __init__(self, ship_sizes):
+    def __init__(self, ship_sizes: list):
         self.ships = []
         self.shots = []
         self.ship_sizes = ship_sizes
@@ -128,7 +128,7 @@ class Board:
             for j in range(10):
                 self.data["prev"]["plot_grid"][f"{i};{j}"] = "tile"
 
-    def overlap_cords(self, ship, cords, rotate=False):
+    def overlap_cords(self, ship: Ship, cords: list, rotate: bool = False) -> (bool, list):
         if self.out_of_bounds(cords):
             return True
         # Remove the first cord if an rotation is being made, this will always be itself.
@@ -176,24 +176,24 @@ class Board:
             return False, new_cords
         return False
 
-    def out_of_bounds(self, cords):
+    def out_of_bounds(self, cords: list) -> bool:
         for cord in cords:
             for xy in cord:
                 if xy < 0 or xy > 9:
                     return True
         return False
 
-    def get_ship(self, cord):
+    def get_ship(self, cord: list) -> Ship:
         for s in self.ships:
             if cord in s.cords:
                 return s
 
-    def overlap(self, ship, other_ship):
+    def overlap(self, ship: Ship, other_ship: Ship) -> bool:
         if ship != other_ship:
             return True
         return False
 
-    def overlap_cord_ship(self, cords, ship):
+    def overlap_cord_ship(self, cords: list, ship: Ship) -> bool:
         for cord in cords:
             if cord in ship.cords:
                 return True
@@ -203,10 +203,10 @@ class Board:
         for i in self.ship_sizes:
             self.place_ship(i)
 
-    def place_ship(self, length):
-        pass
+    # def place_ship(self, length):
+    #     pass
 
-    def hit(self, cord):
+    def hit(self, cord: list) -> (bool, int):
         for ship in self.ships:
             if cord in ship.cords:
                 ship.hits += 1
@@ -217,12 +217,12 @@ class Board:
                 return True, 0
         return False, 0
 
-    def shot_available(self, cord):
+    def shot_available(self, cord: list) -> bool:
         if cord in self.shots:
             return False
         return True
 
-    def shoot(self, cord):
+    def shoot(self, cord: list) -> (bool, int):
         x, y = cord
         self.shots.append(cord)
         hit = self.hit(cord)
@@ -239,11 +239,11 @@ class Board:
 
 
 class PlayerBoard(Board):
-    def __init__(self, ship_sizes, display):
+    def __init__(self, display, ship_sizes: list):
         super().__init__(ship_sizes)
         self.display = display
 
-    def place_ship(self, length):
+    def place_ship(self, length: int):
         ship = Ship(length, self)
         ship.draw(ship.cords)
         self.ships.append(ship)
@@ -265,7 +265,7 @@ class PlayerBoard(Board):
                     elif event.key == pygame.K_r:
                         ship.rotate()
 
-    def selector(self, newx, newy, oldx, oldy, first=False):
+    def selector(self, newx: int, newy: int, oldx: int, oldy: int, first: bool = False):
         if first:
             self.data["prev"]["plot_grid"][f"0;0"] = self.data["plot_grid"][f"0;0"]
             self.data["plot_grid"][f"0;0"] = "select"
@@ -275,7 +275,7 @@ class PlayerBoard(Board):
             self.data["plot_grid"][f"{oldx};{oldy}"] = self.data["prev"]["plot_grid"][f"{oldx};{oldy}"]
             self.data["plot_grid"][f"{newx};{newy}"] = "select"
 
-    def selector_click(self, position):
+    def selector_click(self, position: pygame.mouse.get_pos()) -> list:
         rects = self.display.rects
         for rect in rects:
             if rect.collidepoint(position):
@@ -283,9 +283,8 @@ class PlayerBoard(Board):
                 cord_string = list(self.data["plot_grid"].keys())[index]
                 cord = [int(cord_string.split(";")[0]), int(cord_string.split(";")[1])]
                 return cord
-        pass
 
-    def select_cord(self):
+    def select_cord(self) -> list:
         newx = 0
         newy = 0
         oldx = 0
@@ -321,17 +320,17 @@ class AIBoard(Board):
     def __init__(self, ship_sizes):
         super().__init__(ship_sizes)
 
-    def place_ship(self, length):
+    def place_ship(self, length: int):
         ship = Ship(length, self)
         self.ships.append(ship)
         cords = self.random_cords(length)
         while self.overlap_cords(ship, cords):
             cords = self.random_cords(length)
-        # print(cords)
+        print(cords)
         ship.cords = cords
         ship.draw(cords)
 
-    def random_cords(self, length):
+    def random_cords(self, length: int) -> list:
         x = random.randrange(10)
         y = random.randrange(10)
         r = random.randrange(2)
@@ -376,7 +375,7 @@ class Display:
         self.rect = self.img.get_rect()
         self.rect.topleft = (20, 420)
 
-    def show(self, player_board, w=None, h=None):
+    def show(self, player_board: Board, w: int = None, h: int = None):
         img = self.font.render(self.text, True, self.RED)
         self.rect.size = img.get_size()
         self.rect.size = self.img.get_size()
@@ -485,7 +484,7 @@ class Game:
             # self.check_ships(self.ai_board, self.player_board)
             # self.display.show(self.player_board)
 
-    def check_ships(self, ai_board, player_board):
+    def check_ships(self, ai_board: Board, player_board: Board):
         if not ai_board.ships:
             self.display.show_text("YOU WIN")
             self.game_over = True
@@ -501,8 +500,6 @@ if __name__ == "__main__":
         game = Game(d)
         game.play()
 
-# BUGS: Ship placement is wrong. Ships can be placed in side one another (Maybe implement same system as with the
-# guessing / move the ships like this https://cliambrown.com/battleship/play.php?)
 # Out of bounds tiles can be selected
 
 # IDEAS:
@@ -512,7 +509,6 @@ if __name__ == "__main__":
 # Add numbers and letters to the board 1, 10 and a, j
 # Replace selector for outline or blinker
 # Add exit thingy
-# Add parity grid
 # Selector spawns near last shot
 # Better OO
 # Make input loop function
