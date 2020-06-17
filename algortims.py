@@ -3,7 +3,37 @@ import random
 
 class Algorithm:
     def __init__(self, ships):
-        pass
+        self.possible_targets = []
+        self.last_guess = None
+        self.potential_targets = []
+        self.result = False, 0
+        self.ships = ships
+        for i in range(10):
+            for j in range(10):
+                self.possible_targets.append([i, j])
+
+    def get_surrounding(self, cord: list) -> list:
+        surrounding = []
+        x, y = cord
+
+        # north
+        north = [x, y - 1]
+        if north not in surrounding and north in self.possible_targets:
+            surrounding.append(north)
+        # east
+        east = [x + 1, y]
+        if east not in surrounding and east in self.possible_targets:
+            surrounding.append(east)
+        # south
+        south = [x, y + 1]
+        if south not in surrounding and south in self.possible_targets:
+            surrounding.append(south)
+        # west
+        west = [x - 1, y]
+        if west not in surrounding and west in self.possible_targets:
+            surrounding.append(west)
+
+        return surrounding
 
 
 class OldHuntTarget:
@@ -219,18 +249,9 @@ class OldHuntTarget:
         return north, east, south, west
 
 
-class HuntTarget:
-    def __init__(self, ships):
-        self.result = None
-        self.possible_targets = []
-        self.last_guess = None
-        self.potential_targets = []
-        for i in range(10):
-            for j in range(10):
-                self.possible_targets.append([i, j])
-
+class HuntTarget(Algorithm):
     def turn(self):
-        if self.result:
+        if self.result[0]:
             self.potential_targets.extend(self.get_surrounding(self.last_guess))
         if self.potential_targets:
             cord = self.target()
@@ -246,30 +267,28 @@ class HuntTarget:
     def target(self):
         return self.potential_targets.pop()
 
-    def get_surrounding(self, cord):
-        surroundings = []
-        x, y = cord
-        if x + 1 < 10 and [x + 1, y] in self.possible_targets and [x + 1, y] not in self.potential_targets:
-            surroundings.append([x + 1, y])
-        if x - 1 > -1 and [x - 1, y] in self.possible_targets and [x - 1, y] not in self.potential_targets:
-            surroundings.append([x - 1, y])
-        if y + 1 < 10 and [x, y + 1] in self.possible_targets and [x, y + 1] not in self.potential_targets:
-            surroundings.append([x, y + 1])
-        if y - 1 > -1 and [x, y - 1] in self.possible_targets and [x, y - 1] not in self.potential_targets:
-            surroundings.append([x, y - 1])
+    def check_surrounding(self, cord):
+        surroundings = self.get_surrounding(cord)
+        for cord in surroundings:
+            if cord in self.potential_targets:
+                surroundings.remove(cord)
+        # surroundings = []
+        # x, y = cord
+        # if x + 1 < 10 and [x + 1, y] in self.possible_targets and [x + 1, y] not in self.potential_targets:
+        #     surroundings.append([x + 1, y])
+        # if x - 1 > -1 and [x - 1, y] in self.possible_targets and [x - 1, y] not in self.potential_targets:
+        #     surroundings.append([x - 1, y])
+        # if y + 1 < 10 and [x, y + 1] in self.possible_targets and [x, y + 1] not in self.potential_targets:
+        #     surroundings.append([x, y + 1])
+        # if y - 1 > -1 and [x, y - 1] in self.possible_targets and [x, y - 1] not in self.potential_targets:
+        #     surroundings.append([x, y - 1])
         return surroundings
 
 
-class HuntTargetParity:
+class HuntTargetParity(Algorithm):
     # SELECTEERD SOMS OUT OF BOUNDS CORDS
     def __init__(self, ships):
-        self.result = None
-        self.possible_targets = []
-        self.last_guess = None
-        self.potential_targets = []
-        for i in range(10):
-            for j in range(10):
-                self.possible_targets.append([i, j])
+        super().__init__(ships)
         self.parity_grid = []
         for i in range(10):
             if i % 2 == 0:
@@ -280,8 +299,8 @@ class HuntTargetParity:
                     self.parity_grid.append([i, j])
 
     def turn(self):
-        if self.result:
-            self.potential_targets.extend(self.get_surrounding(self.last_guess))
+        if self.result[0]:
+            self.potential_targets.extend(self.check_surrounding(self.last_guess))
         if self.potential_targets:
             cord = self.target()
         else:
@@ -303,39 +322,29 @@ class HuntTargetParity:
     def target(self):
         return self.potential_targets.pop()
 
-    def get_surrounding(self, cord):
-        surroundings = []
-        x, y = cord
-        if x + 1 < 10 and [x + 1, y] in self.possible_targets and [x + 1, y] not in self.potential_targets:
-            surroundings.append([x + 1, y])
-        if x - 1 > -1 and [x - 1, y] in self.possible_targets and [x - 1, y] not in self.potential_targets:
-            surroundings.append([x - 1, y])
-        if y + 1 < 10 and [x, y + 1] in self.possible_targets and [x, y + 1] not in self.potential_targets:
-            surroundings.append([x, y + 1])
-        if y - 1 > -1 and [x, y - 1] in self.possible_targets and [x, y - 1] not in self.potential_targets:
-            surroundings.append([x, y - 1])
+    def check_surrounding(self, cord):
+        surroundings = self.get_surrounding(cord)
+        for cord in surroundings:
+            if cord in self.potential_targets:
+                surroundings.remove(cord)
         return surroundings
 
 
-class ProbabilityDensity:
+class ProbabilityDensity(Algorithm):
     # Voor elk schip dat er nog is
     #   Voor elke tile
     #       Past schip? Tile prob ++
     def __init__(self, ships):
-        self.ships = ships
-        self.result = None
-        self.possible_targets = []
-        self.last_guess = None
+        super().__init__(ships)
         self.hit_streak = []
-        for i in range(10):
-            for j in range(10):
-                self.possible_targets.append([i, j])
 
     def turn(self):
 
-        if self.result:
-            if not isinstance(self.result, bool):
+        if self.result[0]:
+            if self.result[1] > 0:
                 self.ships.remove(self.result[1])
+                if self.result[1] == len(self.hit_streak):
+                    self.hit_streak.clear()
             self.hit_streak.append(self.last_guess)
         if self.hit_streak:
             probabilities = self.probability(True)
@@ -345,41 +354,6 @@ class ProbabilityDensity:
         self.possible_targets.remove(cord)
         self.last_guess = cord
         return cord
-
-    def hit_probabilties(self):
-        if not isinstance(self.result, bool):
-            if self.result[1] == len(self.hit_streak):
-                self.hit_streak.clear()
-                print("SHIP DESTOYYEEEDDDD")
-                return self.probability()
-
-        # Get surrounding squares
-
-        surrounding = []
-
-        for hit in self.hit_streak:
-            x, y = hit
-
-            # north
-            north = [x, y - 1]
-            if north not in surrounding and north not in self.hit_streak and north in self.possible_targets:
-                surrounding.append()
-            # east
-            east = tuple([x + 1, y])
-            if east not in surrounding and east not in self.hit_streak and east in self.possible_targets:
-                surrounding[east] = 1
-            # south
-            south = tuple([x, y + 1])
-            if south not in surrounding and south not in self.hit_streak and south in self.possible_targets:
-                surrounding[south] = 1
-            # west
-            west = tuple([x - 1, y])
-            if west not in surrounding and west not in self.hit_streak and west in self.possible_targets:
-                surrounding[west] = 1
-            # if tuple([x, y]) not in surrounding and tuple([x, y]) not in self.hit_streak and tuple([x, y]) in self.possible_targets:
-
-        # for ship in self.ships:
-        #     for hit in self.hit_streak:
 
     def probability(self, hit):
         probability_tracker = {}
@@ -394,13 +368,13 @@ class ProbabilityDensity:
                 vertical_tile_tracker = {}
 
                 for i in range(ship):
-                    if [x + i, y] in self.possible_targets:
+                    if [x + i, y] in probable_targets:
                         if tuple([x + i, y]) not in horizontal_tile_tracker:
                             horizontal_tile_tracker[tuple([x + i, y])] = 0
                         horizontal_tile_tracker[tuple([x + i, y])] += 1
                     else:
                         horizontal_tile_tracker.clear()
-                    if [x, y + i] in self.possible_targets:
+                    if [x, y + i] in probable_targets:
                         if tuple([x, y + i]) not in vertical_tile_tracker:
                             vertical_tile_tracker[tuple([x, y + i])] = 0
                         vertical_tile_tracker[tuple([x, y + i])] += 1
@@ -415,52 +389,13 @@ class ProbabilityDensity:
                     if i not in probability_tracker:
                         probability_tracker[i] = 0
                     probability_tracker[i] += vertical_tile_tracker[i]
-                #
-                #
-                #
-                # horizontal = 0
-                # vertical = 0
-                # for i in range(ship):
-                #     if [x+i, y] in self.possible_targets:
-                #         horizontal += 1
-                #     if [x, y+i] in self.possible_targets:
-                #         vertical += 1
-                # if tuple(tile) not in probability_tracker:
-                #     probability_tracker[tuple(tile)] = 0
-                # if horizontal == ship:
-                #     probability_tracker[tuple(tile)] += 1
-                # if vertical == ship:
-                #     probability_tracker[tuple(tile)] += 1
-        try:
-            if not isinstance(self.result, bool):
-                if self.result[1] == len(self.hit_streak):
-                    self.hit_streak.clear()
-                    print("SHIP DESTOYYEEEDDDD")
-                    hit = False
-        except:
-            print("DIT GAAT ALLEEN EERSTE KEER FOUT?")
 
         surrounding = []
 
         for hit in self.hit_streak:
-            x, y = hit
-
-            # north
-            north = [x, y - 1]
-            if north not in surrounding and north not in self.hit_streak and north in self.possible_targets:
-                surrounding.append(north)
-            # east
-            east = [x + 1, y]
-            if east not in surrounding and east not in self.hit_streak and east in self.possible_targets:
-                surrounding.append(east)
-            # south
-            south = [x, y + 1]
-            if south not in surrounding and south not in self.hit_streak and south in self.possible_targets:
-                surrounding.append(south)
-            # west
-            west = [x - 1, y]
-            if west not in surrounding and west not in self.hit_streak and west in self.possible_targets:
-                surrounding.append(west)
+            for cord in self.get_surrounding(hit):
+                if cord not in self.hit_streak and cord not in surrounding:
+                    surrounding.append(cord)
 
         if hit and self.hit_streak:
             hit_probability_tracker = probability_tracker
@@ -482,17 +417,9 @@ class ProbabilityDensity:
         sorted_tracker = {k: v for k, v in sorted(probability_tracker.items(), key=lambda item: item[1])}
         probability_tracker_list = [*sorted_tracker]
         return probability_tracker_list
-        # print(probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)], probability_tracker[(j,i)])
-        # print(probability_tracker[(0,0)], probability_tracker[(1,0)], probability_tracker[(2,0)], probability_tracker[(3,0)], probability_tracker[(4,0)], probability_tracker[(5,0)], probability_tracker[(6,0)], probability_tracker[(7,0)], probability_tracker[(8,0)], probability_tracker[(9,0)])
 
 
-class Random:
-    def __init__(self):
-        self.possible_targets = []
-        for i in range(10):
-            for j in range(10):
-                self.possible_targets.append([i, j])
-
+class Random(Algorithm):
     def turn(self):
         cord = random.choice(self.possible_targets)
         self.possible_targets.remove(cord)

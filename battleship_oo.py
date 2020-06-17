@@ -214,8 +214,8 @@ class Board:
                     # print(f"DESTROYED {ship.length}")
                     self.ships.remove(ship)
                     return True, ship.length
-                return True
-        return False
+                return True, 0
+        return False, 0
 
     def shot_available(self, cord):
         if cord in self.shots:
@@ -226,14 +226,11 @@ class Board:
         x, y = cord
         self.shots.append(cord)
         hit = self.hit(cord)
-        if hit:
+        if hit[0]:
             self.data["shoot_grid"][f"{x};{y}"] = "hit"
-            if not isinstance(hit, bool):
-                return hit
-            return True
         else:
             self.data["shoot_grid"][f"{x};{y}"] = "miss"
-            return False
+        return hit
 
     def reset(self):
         for ship in self.ships:
@@ -444,7 +441,7 @@ class Game:
 
     def player_shoot(self):
         cord = self.player_board.select_cord()
-        if self.ai_board.shoot(cord):
+        if self.ai_board.shoot(cord)[0]:
             self.player_board.data["plot_grid"][f"{cord[0]};{cord[1]}"] = "hit"
             self.display.text = "HIT!"
             pygame.mixer.music.load('hit.mp3')
