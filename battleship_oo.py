@@ -12,7 +12,13 @@ class Ship:
     length = None
     hits = 0
 
-    def __init__(self, length: int, board):
+    def __init__(self, length: int, board: object):
+        """
+        Initializer for Ship.
+
+        :param length: Int
+        :param board: Board
+        """
         self.cords = []
         self.end_x = length
         self.length = length
@@ -20,6 +26,11 @@ class Ship:
         self.board = board
 
     def get_cords(self) -> list:
+        """
+        Gets te coordinates based on a start and end.
+
+        :return: List
+        """
         if self.end_x - self.start_x > 0:
             for i in range(self.start_x, self.end_x):
                 cord = [i, self.start_y]
@@ -31,6 +42,11 @@ class Ship:
         return self.cords
 
     def move(self, direction: str):
+        """
+        Translates the direction input to coordinates.
+
+        :param direction: String
+        """
         new_cords = []
         if direction == "up":
             for cord in self.cords:
@@ -51,11 +67,19 @@ class Ship:
         self.update_position(new_cords)
 
     def draw(self, cords: list):
+        """
+        Draws the given coordinates on in the data object.
+
+        :param cords: List
+        """
         for cord in cords:
             x, y = cord
             self.board.data["shoot_grid"][f"{x};{y}"] = "ship"
 
     def rotate(self):
+        """
+        Rotates the current ship.
+        """
         new_cords = [self.cords[0]]
         xdelta = self.cords[len(self.cords) - 1][0] - self.cords[0][0]
         ydelta = self.cords[len(self.cords) - 1][1] - self.cords[0][1]
@@ -71,6 +95,12 @@ class Ship:
         self.update_position(new_cords, True)
 
     def update_position(self, new_cords: list, rotate: bool = False):
+        """
+        Updates the position of the ship.
+
+        :param new_cords: List
+        :param rotate: List
+        """
         overlap = self.board.overlap_cords(self, new_cords, rotate)
         if not isinstance(overlap, bool):
             while overlap:
@@ -96,6 +126,11 @@ class Ship:
 class Board:
 
     def __init__(self, ship_sizes: list):
+        """
+        Initiator for Board
+
+        :param ship_sizes: List
+        """
         self.ships = []
         self.shots = []
         self.ship_sizes = ship_sizes
@@ -129,6 +164,14 @@ class Board:
                 self.data["prev"]["plot_grid"][f"{i};{j}"] = "tile"
 
     def overlap_cords(self, ship: Ship, cords: list, rotate: bool = False) -> (bool, list):
+        """
+        Returns if a ship is overlapping with coordinates given and if so also return valid coordinates.
+
+        :param ship: Ship
+        :param cords: List
+        :param rotate: Boolean
+        :return: Bool, List
+        """
         if self.out_of_bounds(cords):
             return True
         # Remove the first cord if an rotation is being made, this will always be itself.
@@ -177,6 +220,12 @@ class Board:
         return False
 
     def out_of_bounds(self, cords: list) -> bool:
+        """
+        Returns whether or not coordinates are out of bounds.
+
+        :param cords: List
+        :return: Boolean
+        """
         for cord in cords:
             for xy in cord:
                 if xy < 0 or xy > 9:
@@ -184,22 +233,45 @@ class Board:
         return False
 
     def get_ship(self, cord: list) -> Ship:
+        """
+        Returns the ship on a given coordinate.
+
+        :param cord: List
+        :return: Ship
+        """
         for s in self.ships:
             if cord in s.cords:
                 return s
 
     def overlap(self, ship: Ship, other_ship: Ship) -> bool:
+        """
+        Returns whether or not a ship is overlapping with another ship.
+
+        :param ship: Ship
+        :param other_ship: Ship
+        :return: Boolean
+        """
         if ship != other_ship:
             return True
         return False
 
     def overlap_cord_ship(self, cords: list, ship: Ship) -> bool:
+        """
+        Returns if a coordinate overlaps with the coordinates of a Ship.
+
+        :param cords: List
+        :param ship: Ship
+        :return: Boolean
+        """
         for cord in cords:
             if cord in ship.cords:
                 return True
         return False
 
     def place_ships(self):
+        """
+        Places all the ships
+        """
         for i in self.ship_sizes:
             self.place_ship(i)
 
@@ -207,6 +279,13 @@ class Board:
     #     pass
 
     def hit(self, cord: list) -> (bool, int):
+        """
+        Returns whether the guess was a hit or not and if a ship was destroyed also return what the length of the
+        ships was.
+
+        :param cord: List
+        :return: Boolean, Int
+        """
         for ship in self.ships:
             if cord in ship.cords:
                 ship.hits += 1
@@ -218,11 +297,22 @@ class Board:
         return False, 0
 
     def shot_available(self, cord: list) -> bool:
+        """
+        Returns whether or not a shot is available.
+        :param cord: List
+        :return: Boolean
+        """
         if cord in self.shots:
             return False
         return True
 
     def shoot(self, cord: list) -> (bool, int):
+        """
+        Returns hit info.
+
+        :param cord: list
+        :return: Boolean, Int
+        """
         x, y = cord
         self.shots.append(cord)
         hit = self.hit(cord)
@@ -233,17 +323,38 @@ class Board:
         return hit
 
     def reset(self):
+        """
+        Removes all the ships.
+        """
         for ship in self.ships:
             del ship
         self.ships.clear()
 
+    def place_ship(self, i: int):
+        """
+        Places a Ship.
+
+        :param i: Int
+        """
+        pass
+
 
 class PlayerBoard(Board):
-    def __init__(self, display, ship_sizes: list):
+    def __init__(self, ship_sizes: list, display):
+        """
+        Initiator for PlayerBoard
+        :param ship_sizes: List
+        :param display: Display
+        """
         super().__init__(ship_sizes)
         self.display = display
 
     def place_ship(self, length: int):
+        """
+        Moves the ship bases on keyboard input.
+
+        :param length: Int
+        """
         ship = Ship(length, self)
         ship.draw(ship.cords)
         self.ships.append(ship)
@@ -266,6 +377,15 @@ class PlayerBoard(Board):
                         ship.rotate()
 
     def selector(self, newx: int, newy: int, oldx: int, oldy: int, first: bool = False):
+        """
+        Draws the selector in the data object
+
+        :param newx: Int
+        :param newy: Int
+        :param oldx: Int
+        :param oldy: Int
+        :param first: Boolean
+        """
         if first:
             self.data["prev"]["plot_grid"][f"0;0"] = self.data["plot_grid"][f"0;0"]
             self.data["plot_grid"][f"0;0"] = "select"
@@ -275,7 +395,13 @@ class PlayerBoard(Board):
             self.data["plot_grid"][f"{oldx};{oldy}"] = self.data["prev"]["plot_grid"][f"{oldx};{oldy}"]
             self.data["plot_grid"][f"{newx};{newy}"] = "select"
 
-    def selector_click(self, position: pygame.mouse.get_pos()) -> list:
+    def selector_click(self, position: list) -> list:
+        """
+        Returns the coordinate of the clicked tile
+
+        :param position: List
+        :return: List
+        """
         rects = self.display.rects
         for rect in rects:
             if rect.collidepoint(position):
@@ -285,6 +411,11 @@ class PlayerBoard(Board):
                 return cord
 
     def select_cord(self) -> list:
+        """
+        Returns what coordinate was selected.
+
+        :return: List
+        """
         newx = 0
         newy = 0
         oldx = 0
@@ -318,9 +449,19 @@ class PlayerBoard(Board):
 
 class AIBoard(Board):
     def __init__(self, ship_sizes):
+        """
+        Initiator for AIBoard
+
+        :param ship_sizes: List
+        """
         super().__init__(ship_sizes)
 
     def place_ship(self, length: int):
+        """
+        Places all the ships randomly.
+
+        :param length: Int
+        """
         ship = Ship(length, self)
         self.ships.append(ship)
         cords = self.random_cords(length)
@@ -331,6 +472,12 @@ class AIBoard(Board):
         ship.draw(cords)
 
     def random_cords(self, length: int) -> list:
+        """
+        Returns random coordinates to place a ship.
+
+        :param length: Int
+        :return: List
+        """
         x = random.randrange(10)
         y = random.randrange(10)
         r = random.randrange(2)
@@ -358,6 +505,9 @@ class AIBoard(Board):
 
 class Display:
     def __init__(self):
+        """
+        Initiator for Display.
+        """
         self.rects = []
         self.text = "begin text"
         pygame.init()
@@ -376,6 +526,13 @@ class Display:
         self.rect.topleft = (20, 420)
 
     def show(self, player_board: Board, w: int = None, h: int = None):
+        """
+        Shows the game on the screen.
+
+        :param player_board: Board
+        :param w: Int
+        :param h: Int
+        """
         img = self.font.render(self.text, True, self.RED)
         self.rect.size = img.get_size()
         self.rect.size = self.img.get_size()
@@ -424,6 +581,12 @@ class Display:
 
 class Game:
     def __init__(self, display, ship_sizes=[5, 4, 3, 3, 2]):
+        """
+        Initiator for Game.
+
+        :param display: Display
+        :param ship_sizes: List
+        """
         self.display = display
         self.player_board = PlayerBoard(ship_sizes, self.display)
         self.ai_board = AIBoard(ship_sizes)
@@ -431,6 +594,9 @@ class Game:
         self.AI = algortims.ProbabilityDensity(ship_sizes)
 
     def ai_shoot(self):
+        """
+        Makes the AI shoot.
+        """
         cord = self.AI.turn()
         self.AI.result = self.player_board.shoot(cord)
         # x, y = random.randrange(10), random.randrange(10)
@@ -439,6 +605,9 @@ class Game:
         # result = self.player_board.shoot([x, y])
 
     def player_shoot(self):
+        """
+        Make the player decided where to shoot.
+        """
         cord = self.player_board.select_cord()
         if self.ai_board.shoot(cord)[0]:
             self.player_board.data["plot_grid"][f"{cord[0]};{cord[1]}"] = "hit"
@@ -452,6 +621,9 @@ class Game:
             pygame.mixer.music.play(0)
 
     def play(self):
+        """
+        The game setup and main loop.
+        """
         self.display.show(self.player_board)
         self.display.text = "Set up your ships, you can move your ships with the arrow keys and rotate them with the r key"
         self.player_board.place_ships()
@@ -485,6 +657,11 @@ class Game:
             # self.display.show(self.player_board)
 
     def check_ships(self, ai_board: Board, player_board: Board):
+        """
+        Checks if there are still ships on the board.
+        :param ai_board: AIBoard
+        :param player_board: PlayerBoard
+        """
         if not ai_board.ships:
             self.display.show_text("YOU WIN")
             self.game_over = True

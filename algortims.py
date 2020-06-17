@@ -3,6 +3,11 @@ import random
 
 class Algorithm:
     def __init__(self, ships: list):
+        """
+        Initiator for Algorithm.
+
+        :param ships: List
+        """
         self.possible_targets = []
         self.last_guess = None
         self.potential_targets = []
@@ -13,6 +18,11 @@ class Algorithm:
                 self.possible_targets.append([i, j])
 
     def get_surrounding(self, cord: list) -> list:
+        """
+        Returns the 4 surrounding coordinates of a coordinate.
+
+        :param cord: List
+        """
         surrounding = []
         x, y = cord
 
@@ -251,6 +261,11 @@ class OldHuntTarget:
 
 class HuntTarget(Algorithm):
     def turn(self) -> list:
+        """
+        Returns the coordinate where the AI will shoot.
+
+        :return: List
+        """
         if self.result[0]:
             self.potential_targets.extend(self.get_surrounding(self.last_guess))
         if self.potential_targets:
@@ -262,12 +277,28 @@ class HuntTarget(Algorithm):
         return cord
 
     def hunt(self) -> list:
+        """
+        Returns a random coordinate from all coordinates that are still possible.
+
+        :return: List
+        """
         return random.choice(self.possible_targets)
 
     def target(self) -> list:
+        """
+        Returns a coordinate from the potential targets
+
+        :return: List
+        """
         return self.potential_targets.pop()
 
     def check_surrounding(self, cord: list) -> list:
+        """
+        Returns the checked surrounding coordinates.
+
+        :param cord: List
+        :return: List
+        """
         surroundings = self.get_surrounding(cord)
         for cord in surroundings:
             if cord in self.potential_targets:
@@ -277,7 +308,13 @@ class HuntTarget(Algorithm):
 
 class HuntTargetParity(Algorithm):
     # SELECTEERD SOMS OUT OF BOUNDS CORDS
-    def __init__(self):
+    def __init__(self, ships: list):
+        """
+        Initiator for HuntTargetParity
+
+        :param ships: List
+        """
+        super().__init__(ships)
         self.parity_grid = []
         for i in range(10):
             if i % 2 == 0:
@@ -288,6 +325,11 @@ class HuntTargetParity(Algorithm):
                     self.parity_grid.append([i, j])
 
     def turn(self) -> list:
+        """
+        Returns the coordinate where the AI will shoot.
+
+        :return: List
+        """
         if self.result[0]:
             self.potential_targets.extend(self.check_surrounding(self.last_guess))
         if self.potential_targets:
@@ -299,6 +341,11 @@ class HuntTargetParity(Algorithm):
         return cord
 
     def hunt(self) -> list:
+        """
+        Returns a coordinate taking parity into account.
+
+        :return: List
+        """
         if self.parity_grid:
             cord = random.choice(self.parity_grid)
             while cord not in self.possible_targets:
@@ -309,9 +356,20 @@ class HuntTargetParity(Algorithm):
         return cord
 
     def target(self) -> list:
+        """
+        Returns a potential coordinate.
+
+        :return: List
+        """
         return self.potential_targets.pop()
 
     def check_surrounding(self, cord: list) -> list:
+        """
+        Returns the checked surrounding coordinates.
+
+        :param cord: List
+        :return: List
+        """
         surroundings = self.get_surrounding(cord)
         for cord in surroundings:
             if cord in self.potential_targets:
@@ -324,16 +382,27 @@ class ProbabilityDensity(Algorithm):
     #   Voor elke tile
     #       Past schip? Tile prob ++
     def __init__(self, ships):
+        """
+        Initiator for ProbabilityDensity.
+
+        :param ships: List
+        """
         super().__init__(ships)
         self.hit_streak = []
 
     def turn(self) -> list:
+        """
+        Returns where the AI wants to shoot.
+
+        :return: List
+        """
         if self.result[0]:
+            self.hit_streak.append(self.last_guess)
             if self.result[1] > 0:
                 self.ships.remove(self.result[1])
+                print(self.result[1], len(self.hit_streak))
                 if self.result[1] == len(self.hit_streak):
                     self.hit_streak.clear()
-            self.hit_streak.append(self.last_guess)
         if self.hit_streak:
             probabilities = self.probability(True)
         else:
@@ -343,7 +412,13 @@ class ProbabilityDensity(Algorithm):
         self.last_guess = cord
         return cord
 
-    def probability(self, hit: list) -> list:
+    def probability(self, hit: bool) -> list:
+        """
+        Returns a list sorted based on where a ship most likely is.
+
+        :param hit: Boolean
+        :return: List
+        """
         probability_tracker = {}
 
         probable_targets = self.possible_targets + self.hit_streak
@@ -409,6 +484,11 @@ class ProbabilityDensity(Algorithm):
 
 class Random(Algorithm):
     def turn(self) -> list:
+        """
+        Returns a random coordinate on the board.
+
+        :return: List
+        """
         cord = random.choice(self.possible_targets)
         self.possible_targets.remove(cord)
         return cord
@@ -416,5 +496,3 @@ class Random(Algorithm):
 # IDEAS:
 # Keep track of entire ships ( see "C:/Users/Floris%20Videler/Pictures/Aantekening%202020-06-08%20092556.png" why this is usefull)
 # Better target algorithm ( check what direction the ship is facing )
-# Devide hunt/target and prob algoritms
-# Make hit return bool, None/ship
