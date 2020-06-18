@@ -20,6 +20,18 @@ class AlgorithmTest(unittest.TestCase):
 
 
 class HuntTargetTest(unittest.TestCase):
+    ships = [5, 4, 3, 3, 2]
+    algorithm = HuntTarget(ships)
+
+    def test_potential_targets(self):
+        """
+        [4, 4] gets removed (kind of like it was a miss)
+        After that, when we hit [4, 5], [4, 4] should not be in te potential targets list
+        """
+        self.algorithm.possible_targets.remove([4, 4])
+        self.algorithm.last_guess = [4, 5]
+        self.algorithm.turn()
+        self.assertNotIn([4, 4], self.algorithm.potential_targets)
     pass
 
 
@@ -28,7 +40,15 @@ class HuntTargetParityTest(unittest.TestCase):
 
 
 class ProbabilityDensityTest(unittest.TestCase):
-    pass
+    ships = [5, 4, 3, 3, 2]
+    algorithm = ProbabilityDensity(ships)
+
+    def test_probability(self):
+        """
+        Should return either [4, 4], [5, 4], [4, 5] or [5, 5] because the middle ones are most likey to contain a
+        ship at the start of the game
+        """
+        self.assertIn(self.algorithm.turn(), [[4, 4], [5, 4], [4, 5], [5, 5]])
 
 
 class RandomTest(unittest.TestCase):
@@ -41,7 +61,9 @@ class RandomTest(unittest.TestCase):
             need_to_guess.append([i, j])
 
     def test_unique_turn(self):
-
+        """
+        Make sure that all the random guesses are possible.
+        """
         for i in self.need_to_guess:
             with self.subTest(i=i):
                 self.assertIn(self.algorithm.turn(), self.need_to_guess)

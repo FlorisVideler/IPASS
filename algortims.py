@@ -476,7 +476,7 @@ class ProbabilityDensity(Algorithm):
                     string += str(probability_tracker[j, i]) + "  "
                 except KeyError:
                     string += "0  "
-            # print(string)
+            print(string)
         sorted_tracker = {k: v for k, v in sorted(probability_tracker.items(), key=lambda item: item[1])}
         probability_tracker_list = [*sorted_tracker]
         return probability_tracker_list
