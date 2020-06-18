@@ -25,23 +25,31 @@ class Algorithm:
         """
         surrounding = []
         x, y = cord
-
+        # ADD [0] FOR NOT IN!
         # north
         north = [x, y - 1]
         if north not in surrounding and north in self.possible_targets:
             surrounding.append(north)
+        else:
+            surrounding.append([0])
         # east
         east = [x + 1, y]
         if east not in surrounding and east in self.possible_targets:
             surrounding.append(east)
+        else:
+            surrounding.append([0])
         # south
         south = [x, y + 1]
         if south not in surrounding and south in self.possible_targets:
             surrounding.append(south)
+        else:
+            surrounding.append([0])
         # west
         west = [x - 1, y]
         if west not in surrounding and west in self.possible_targets:
             surrounding.append(west)
+        else:
+            surrounding.append([0])
 
         return surrounding
 
@@ -267,7 +275,7 @@ class HuntTarget(Algorithm):
         :return: List
         """
         if self.result[0]:
-            self.potential_targets.extend(self.get_surrounding(self.last_guess))
+            self.potential_targets.extend(self.check_surrounding(self.last_guess))
         if self.potential_targets:
             cord = self.target()
         else:
@@ -301,7 +309,7 @@ class HuntTarget(Algorithm):
         """
         surroundings = self.get_surrounding(cord)
         for cord in surroundings:
-            if cord in self.potential_targets:
+            if cord in self.potential_targets or cord == [0]:
                 surroundings.remove(cord)
         return surroundings
 
@@ -311,8 +319,6 @@ class HuntTargetParity(Algorithm):
     def __init__(self, ships: list):
         """
         Initiator for HuntTargetParity
-
-        :param ships: List
         """
         super().__init__(ships)
         self.parity_grid = []
@@ -332,12 +338,16 @@ class HuntTargetParity(Algorithm):
         """
         if self.result[0]:
             self.potential_targets.extend(self.check_surrounding(self.last_guess))
+            if self.result[1] in self.ships:
+                self.ships.remove(self.result[1])
         if self.potential_targets:
             cord = self.target()
         else:
             cord = self.hunt()
+            self.parity()
         self.possible_targets.remove(cord)
         self.last_guess = cord
+        print(cord)
         return cord
 
     def hunt(self) -> list:
@@ -348,9 +358,10 @@ class HuntTargetParity(Algorithm):
         """
         if self.parity_grid:
             cord = random.choice(self.parity_grid)
+            self.parity_grid.remove(cord)
             while cord not in self.possible_targets:
                 cord = random.choice(self.parity_grid)
-            self.parity_grid.remove(cord)
+                self.parity_grid.remove(cord)
         else:
             cord = random.choice(self.possible_targets)
         return cord
@@ -361,7 +372,21 @@ class HuntTargetParity(Algorithm):
 
         :return: List
         """
-        return self.potential_targets.pop()
+        while True:
+            if len(self.potential_targets) > 0:
+                cord = self.potential_targets.pop()
+                if cord in self.possible_targets:
+                    return cord
+            else:
+                cord = random.choice(self.possible_targets)
+                return cord
+        # cord = self.potential_targets.pop()
+        # while cord not in self.possible_targets:
+        #     if len(self.potential_targets) > 0:
+        #         cord = self.potential_targets.pop()
+        #     else:
+        #         cord = random.choice(self.possible_targets)
+        # return cord
 
     def check_surrounding(self, cord: list) -> list:
         """
@@ -372,9 +397,45 @@ class HuntTargetParity(Algorithm):
         """
         surroundings = self.get_surrounding(cord)
         for cord in surroundings:
-            if cord in self.potential_targets:
+            if cord in self.potential_targets or cord == [0] or cord not in self.possible_targets:
                 surroundings.remove(cord)
         return surroundings
+
+    def parity(self):
+        elemination = []
+
+        smallest_ship = min(self.ships)
+
+        for i in self.possible_targets:
+            # Horizontal
+            horizontal = 0
+            checking_cord = i
+            while self.get_surrounding(checking_cord)[1] in self.possible_targets:
+                horizontal += 1
+                checking_cord = self.get_surrounding(checking_cord)[1]
+            checking_cord = i
+            while self.get_surrounding(checking_cord)[3] in self.possible_targets:
+                horizontal += 1
+                checking_cord = self.get_surrounding(checking_cord)[3]
+            # Vertical
+            vertical = 0
+            checking_cord = i
+            while self.get_surrounding(checking_cord)[0] in self.possible_targets:
+                vertical += 1
+                checking_cord = self.get_surrounding(checking_cord)[0]
+            checking_cord = i
+            while self.get_surrounding(checking_cord)[2] in self.possible_targets:
+                vertical += 1
+                checking_cord = self.get_surrounding(checking_cord)[2]
+
+            if vertical < smallest_ship-1 and horizontal < smallest_ship-1:
+                elemination.append(i)
+        for i in elemination:
+            self.parity_grid.clear()
+            if i in self.possible_targets:
+                self.possible_targets.remove(i)
+        print("ELEM:", elemination)
+
 
 
 class ProbabilityDensity(Algorithm):
@@ -457,7 +518,7 @@ class ProbabilityDensity(Algorithm):
 
         for hit in self.hit_streak:
             for cord in self.get_surrounding(hit):
-                if cord not in self.hit_streak and cord not in surrounding:
+                if cord not in self.hit_streak and cord not in surrounding and cord != [0]:
                     surrounding.append(cord)
 
         if hit and self.hit_streak:
