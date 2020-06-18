@@ -53,6 +53,9 @@ class Algorithm:
 
         return surrounding
 
+    def turn(self):
+        pass
+
 
 class OldHuntTarget:
     def __init__(self, ships):
@@ -281,7 +284,10 @@ class HuntTarget(Algorithm):
         else:
             cord = self.hunt()
         self.last_guess = cord
-        self.possible_targets.remove(cord)
+        try:
+            self.possible_targets.remove(cord)
+        except:
+            print("break")
         return cord
 
     def hunt(self) -> list:
@@ -298,7 +304,14 @@ class HuntTarget(Algorithm):
 
         :return: List
         """
-        return self.potential_targets.pop()
+        while True:
+            if len(self.potential_targets) > 0:
+                cord = self.potential_targets.pop()
+                if cord in self.possible_targets:
+                    return cord
+            else:
+                cord = random.choice(self.possible_targets)
+                return cord
 
     def check_surrounding(self, cord: list) -> list:
         """
@@ -343,11 +356,14 @@ class HuntTargetParity(Algorithm):
         if self.potential_targets:
             cord = self.target()
         else:
-            cord = self.hunt()
             self.parity()
-        self.possible_targets.remove(cord)
+            cord = self.hunt()
+        try:
+            self.possible_targets.remove(cord)
+        except:
+            print("b")
         self.last_guess = cord
-        print(cord)
+        # print(cord)
         return cord
 
     def hunt(self) -> list:
@@ -378,7 +394,7 @@ class HuntTargetParity(Algorithm):
                 if cord in self.possible_targets:
                     return cord
             else:
-                cord = random.choice(self.possible_targets)
+                cord = self.hunt()
                 return cord
         # cord = self.potential_targets.pop()
         # while cord not in self.possible_targets:
@@ -404,7 +420,7 @@ class HuntTargetParity(Algorithm):
     def parity(self):
         """
         Checks where the smallest ship doesn't fit and removes those coordinates from the list with possible
-        coordinates. 
+        coordinates.
         """
         elimination = []
 
@@ -438,7 +454,7 @@ class HuntTargetParity(Algorithm):
             self.parity_grid.clear()
             if i in self.possible_targets:
                 self.possible_targets.remove(i)
-        print("ELEM:", elimination)
+        # print("ELEM:", elimination)
 
 
 
@@ -465,14 +481,17 @@ class ProbabilityDensity(Algorithm):
             self.hit_streak.append(self.last_guess)
             if self.result[1] > 0:
                 self.ships.remove(self.result[1])
-                print(self.result[1], len(self.hit_streak))
+                # print(self.result[1], len(self.hit_streak))
                 if self.result[1] == len(self.hit_streak):
                     self.hit_streak.clear()
         if self.hit_streak:
             probabilities = self.probability(True)
         else:
             probabilities = self.probability(False)
-        cord = list(probabilities.pop())
+        try:
+            cord = list(probabilities.pop())
+        except:
+            print("b")
         self.possible_targets.remove(cord)
         self.last_guess = cord
         return cord
@@ -532,7 +551,7 @@ class ProbabilityDensity(Algorithm):
                 if list(i) not in self.hit_streak and list(i) in surrounding:
                     probability_tracker[i] = hit_probability_tracker[i]
 
-        print(probability_tracker)
+        # print(probability_tracker)
 
         for i in range(10):
             string = ""
@@ -541,10 +560,13 @@ class ProbabilityDensity(Algorithm):
                     string += str(probability_tracker[j, i]) + "  "
                 except KeyError:
                     string += "0  "
-            print(string)
+            # print(string)
         sorted_tracker = {k: v for k, v in sorted(probability_tracker.items(), key=lambda item: item[1])}
         probability_tracker_list = [*sorted_tracker]
-        return probability_tracker_list
+        if len(probability_tracker_list) > 0:
+            return probability_tracker_list
+        else:
+            return [random.choice(self.possible_targets)]
 
 
 class Random(Algorithm):
@@ -554,8 +576,11 @@ class Random(Algorithm):
 
         :return: List
         """
-        cord = random.choice(self.possible_targets)
-        self.possible_targets.remove(cord)
+        try:
+            cord = random.choice(self.possible_targets)
+            self.possible_targets.remove(cord)
+        except:
+            print("breaking")
         return cord
 
 # IDEAS:

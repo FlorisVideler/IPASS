@@ -467,7 +467,7 @@ class AIBoard(Board):
         cords = self.random_cords(length)
         while self.overlap_cords(ship, cords):
             cords = self.random_cords(length)
-        print(cords)
+        # print(cords)
         ship.cords = cords
         ship.draw(cords)
 

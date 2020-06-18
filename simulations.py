@@ -4,7 +4,7 @@ import json
 import time
 
 
-class Simulation:
+class Simulation2:
     def __init__(self, ship_sizes):
         self.sizes = ship_sizes
         self.ai_board = battleship_oo.AIBoard(self.sizes)
@@ -56,18 +56,53 @@ class Simulation:
         pass
 
 
+class Simulation:
+    def __init__(self, ship_sizes):
+        self.AI = None
+        self.ship_sizes = ship_sizes
+
+    def shoot(self, ai: algortims.Algorithm, board: battleship_oo.AIBoard):
+        cord = ai.turn()
+        ai.result = board.shoot(cord)
+
+    def simulate(self, algo):
+        total_turns = 0
+        for i in range(10000):
+            self.ship_sizes = [5, 4, 3, 3, 2]
+            # print(self.ship_sizes)
+            if algo == "random":
+                self.AI = algortims.Random(self.ship_sizes)
+            elif algo == "hunttarget":
+                self.AI = algortims.HuntTarget(self.ship_sizes)
+            elif algo == "hunttargetparity":
+                self.AI = algortims.HuntTargetParity(self.ship_sizes)
+            elif algo == "prob":
+                self.AI = algortims.ProbabilityDensity(self.ship_sizes)
+            ai_board = battleship_oo.AIBoard(self.ship_sizes)
+            ai_board.place_ships()
+            turns = 0
+            while len(ai_board.ships) > 0:
+                self.shoot(self.AI, ai_board)
+                turns += 1
+            total_turns += turns
+            if i % 100 == 0:
+                print(i)
+            # print(f"{i} -- took {turns} turns")
+        print(f"{algo} took {total_turns/10000} turns on average.")
+
+
 def main():
-    print("Welcome to the simulations")
-    print("What algorithm would you like to simulate?\n"
-          "1. Deze")
-    algorithm_to_sim = input(": ")
-    ship_sizes = [5, 4, 3, 2]
+    ship_sizes = [5, 4, 3, 3, 2]
+
+    algortims_names = ["random", "hunttarget", "hunttargetparity", "prob"]
+
+    print("Using default ship sizes", ship_sizes)
+    print("Running all the algorithms 10000 times")
 
     simulation = Simulation(ship_sizes)
-    tic = time.perf_counter()
-    simulation.run(10000)
-    toc = time.perf_counter()
-    print(f"Simulation ran in {toc - tic:0.4f} seconds")
+
+    for i in algortims_names:
+        simulation.simulate(i)
 
 
 if __name__ == "__main__":
