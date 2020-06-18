@@ -402,7 +402,11 @@ class HuntTargetParity(Algorithm):
         return surroundings
 
     def parity(self):
-        elemination = []
+        """
+        Checks where the smallest ship doesn't fit and removes those coordinates from the list with possible
+        coordinates. 
+        """
+        elimination = []
 
         smallest_ship = min(self.ships)
 
@@ -429,12 +433,12 @@ class HuntTargetParity(Algorithm):
                 checking_cord = self.get_surrounding(checking_cord)[2]
 
             if vertical < smallest_ship-1 and horizontal < smallest_ship-1:
-                elemination.append(i)
-        for i in elemination:
+                elimination.append(i)
+        for i in elimination:
             self.parity_grid.clear()
             if i in self.possible_targets:
                 self.possible_targets.remove(i)
-        print("ELEM:", elemination)
+        print("ELEM:", elimination)
 
 
 
