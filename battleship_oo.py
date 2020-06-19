@@ -591,7 +591,7 @@ class Game:
         self.player_board = PlayerBoard(ship_sizes, self.display)
         self.ai_board = AIBoard(ship_sizes)
         self.game_over = False
-        self.AI = algortims.HuntTargetParity(ship_sizes)
+        self.AI = algortims.ProbabilityDensity(ship_sizes)
 
     def ai_shoot(self):
         """

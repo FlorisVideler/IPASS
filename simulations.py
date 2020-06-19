@@ -60,7 +60,7 @@ class Simulation:
     def __init__(self, ship_sizes):
         self.AI = None
         self.ship_sizes = ship_sizes
-        self.write(1000)
+        self.write(100)
 
     def shoot(self, ai: algortims.Algorithm, board: battleship_oo.AIBoard):
         cord = ai.turn()
@@ -69,7 +69,7 @@ class Simulation:
     def simulate(self, algo):
         total_turns = 0
 
-        for i in range(1000):
+        for i in range(50000):
             self.ship_sizes = [5, 4, 3, 3, 2]
             # print(self.ship_sizes)
             if algo == "random":
@@ -88,24 +88,24 @@ class Simulation:
                 turns += 1
             self.write_append(turns, i, algo)
             total_turns += turns
-            if i % 100 == 0:
+            if i % 10000 == 0:
                 print(i)
             # print(f"{i} -- took {turns} turns")
 
-        print(f"{algo} took {total_turns/1000} turns on average.")
+        print(f"{algo} took {total_turns/50000} turns on average.")
 
     def write(self, i):
         data = {"runs": i}
-        with open('JSON/data.json', 'w') as outfile:
+        with open('JSON/data1.json', 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
     def write_append(self, turns, run, algo):
-        with open('JSON/data.json') as json_file:
+        with open('JSON/data1.json') as json_file:
             data = json.load(json_file)
         if algo not in data:
             data[algo] = []
         data[algo].append(turns)
-        with open('JSON/data.json', 'w') as outfile:
+        with open('JSON/data1.json', 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
 
@@ -115,7 +115,7 @@ def main():
     algortims_names = ["random", "hunttarget", "hunttargetparity", "prob"]
 
     print("Using default ship sizes", ship_sizes)
-    print("Running all the algorithms 1000 times")
+    print("Running all the algorithms 50000 times")
 
     simulation = Simulation(ship_sizes)
 
