@@ -335,6 +335,7 @@ class HuntTargetParity(Algorithm):
         """
         super().__init__(ships)
         self.parity_grid = []
+        self.smallest_ship = min(self.ships)
         for i in range(10):
             if i % 2 == 0:
                 for j in range(1, 10, 2):
@@ -349,6 +350,7 @@ class HuntTargetParity(Algorithm):
 
         :return: List
         """
+
         if self.result[0]:
             self.potential_targets.extend(self.check_surrounding(self.last_guess))
             if self.result[1] in self.ships:
@@ -356,7 +358,9 @@ class HuntTargetParity(Algorithm):
         if self.potential_targets:
             cord = self.target()
         else:
-            self.parity()
+            if self.smallest_ship < min(self.ships):
+                self.smallest_ship = min(self.ships)
+                self.parity()
             cord = self.hunt()
         try:
             self.possible_targets.remove(cord)
