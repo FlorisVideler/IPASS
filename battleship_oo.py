@@ -421,10 +421,10 @@ class PlayerBoard(Board):
         oldx = 0
         oldy = 0
         selected = False
-        self.selector(newx, newy, oldx, oldy, True)
+        # self.selector(newx, newy, oldx, oldy, True)
         while not selected:
             if (-1 < newx < 10) and (-1 < newy < 10):
-                self.selector(newx, newy, oldx, oldy)
+                #self.selector(newx, newy, oldx, oldy)
                 self.display.show(self)
                 oldy = newy
                 oldx = newx
@@ -432,7 +432,8 @@ class PlayerBoard(Board):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         if self.data["prev"]["plot_grid"][f"{newx};{newy}"] == "tile":
-                            return [newx, newy]
+                            #return [newx, newy]
+                            pass
                     elif event.key == pygame.K_DOWN:
                         newy = oldy + 1
                     elif event.key == pygame.K_UP:
