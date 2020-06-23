@@ -60,7 +60,7 @@ class Simulation:
     def __init__(self, ship_sizes):
         self.AI = None
         self.ship_sizes = ship_sizes
-        self.write(100)
+        self.write(50000)
 
     def shoot(self, ai: algortims.Algorithm, board: battleship_oo.AIBoard):
         cord = ai.turn()
@@ -70,7 +70,7 @@ class Simulation:
         total_turns = 0
 
         for i in range(50000):
-            self.ship_sizes = [5, 4, 3, 3, 2]
+            self.ship_sizes = [5, 4, 3, 3]
             # print(self.ship_sizes)
             if algo == "random":
                 self.AI = algortims.Random(self.ship_sizes)
@@ -96,21 +96,21 @@ class Simulation:
 
     def write(self, i):
         data = {"runs": i}
-        with open('JSON/data1.json', 'w') as outfile:
+        with open('JSON/data6443332222.json', 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
     def write_append(self, turns, run, algo):
-        with open('JSON/data1.json') as json_file:
+        with open('JSON/data6443332222.json') as json_file:
             data = json.load(json_file)
         if algo not in data:
             data[algo] = []
         data[algo].append(turns)
-        with open('JSON/data1.json', 'w') as outfile:
+        with open('JSON/data6443332222.json', 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
 
 def main():
-    ship_sizes = [5, 4, 3, 3, 2]
+    ship_sizes = [6, 4, 4, 3, 3, 3, 2, 2, 2, 2]
 
     algortims_names = ["random", "hunttarget", "hunttargetparity", "prob"]
 

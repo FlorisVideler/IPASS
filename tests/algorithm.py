@@ -36,7 +36,11 @@ class HuntTargetTest(unittest.TestCase):
 
 
 class HuntTargetParityTest(unittest.TestCase):
-    pass
+    ships = [5, 4, 3, 3, 2]
+    algorithm = HuntTargetParity(ships)
+
+    def test_parity_grid(self):
+        self.assertNotIn([0,0], self.algorithm.parity_grid)
 
 
 class ProbabilityDensityTest(unittest.TestCase):
