@@ -96,21 +96,21 @@ class Simulation:
 
     def write(self, i):
         data = {"runs": i}
-        with open('JSON/data6443332222.json', 'w') as outfile:
+        with open('JSON/data644333.json', 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
     def write_append(self, turns, run, algo):
-        with open('JSON/data6443332222.json') as json_file:
+        with open('JSON/data644333.json') as json_file:
             data = json.load(json_file)
         if algo not in data:
             data[algo] = []
         data[algo].append(turns)
-        with open('JSON/data6443332222.json', 'w') as outfile:
+        with open('JSON/data644333.json', 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
 
 def main():
-    ship_sizes = [6, 4, 4, 3, 3, 3, 2, 2, 2, 2]
+    ship_sizes = [6, 4, 4, 3, 3, 3]
 
     algortims_names = ["random", "hunttarget", "hunttargetparity", "prob"]
 

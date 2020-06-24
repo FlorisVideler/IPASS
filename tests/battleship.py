@@ -31,10 +31,25 @@ class TestBoard(unittest.TestCase):
         self.assertFalse(self.board.out_of_bounds(not_out_of_bounds))
 
 class TestPlayerBoard(unittest.TestCase):
-    pass
+    ship_sizes = [5, 4, 3, 3, 2]
+    display = Display()
+    player_board = PlayerBoard(ship_sizes, display)
+    # display.show()
+
+
+    def test_mouse_to_tile(self):
+        position_not_on_map = (100, 390)
+
+        self.assertEqual([0], self.player_board.selector_click(position_not_on_map))
+
 
 class TestAIBoard(unittest.TestCase):
-    pass
+    ship_sizes = [5, 4, 3, 3, 2]
+    ai_board = AIBoard(ship_sizes)
+
+    def test_ship_placing(self):
+        self.ai_board.place_ships()
+        self.assertEqual(len(self.ship_sizes), len(self.ai_board.ships))
 
 if __name__ == '__main__':
     unittest.main()
