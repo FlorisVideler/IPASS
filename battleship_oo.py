@@ -644,7 +644,7 @@ class Game:
         i = 0
         while not self.game_over:
             # self.display.show_text(str(i))
-            self.display.text = "Use the arrow keys to choose where to attack"
+            self.display.text = "Use the the mouse to choose where to attack"
             self.player_shoot()
             i += 1
             self.ai_shoot()
