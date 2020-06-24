@@ -66,4 +66,4 @@ Add additional notes about how to deploy this on a live system
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 License - see the [LICENSE](licence) file for details
+This project is licensed under the GNU General Public License v3.0 License - see the [licence](licence) file for details
