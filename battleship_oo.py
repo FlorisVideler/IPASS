@@ -375,6 +375,9 @@ class PlayerBoard(Board):
                         ship.move("right")
                     elif event.key == pygame.K_r:
                         ship.rotate()
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
 
     def selector(self, newx: int, newy: int, oldx: int, oldy: int, first: bool = False):
         """
@@ -451,6 +454,9 @@ class PlayerBoard(Board):
                     cord = self.selector_click(pos)
                     if cord != [0]:
                         return cord
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
 
 
 class AIBoard(Board):
@@ -625,12 +631,12 @@ class Game:
         if self.ai_board.shoot(cord)[0]:
             self.player_board.data["plot_grid"][f"{cord[0]};{cord[1]}"] = "hit"
             self.display.text = "HIT!"
-            pygame.mixer.music.load('hit.mp3')
+            pygame.mixer.music.load('assests/sounds/hit.mp3')
             pygame.mixer.music.play(0)
         else:
             self.player_board.data["plot_grid"][f"{cord[0]};{cord[1]}"] = "miss"
             self.display.text = "MISS!"
-            pygame.mixer.music.load('miss.mp3')
+            pygame.mixer.music.load('assests/sounds/miss.mp3')
             pygame.mixer.music.play(0)
 
     def play(self):
@@ -670,6 +676,9 @@ class Game:
                 else:
                     self.check_ships(self.ai_board, self.player_board, i)
                     self.display.show(self.player_board)
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -687,13 +696,13 @@ class Game:
         :param steps: Int
         """
         if not ai_board.ships:
-            pygame.mixer.music.load('win.mp3')
+            pygame.mixer.music.load('assests/sounds/win.mp3')
             pygame.mixer.music.play(0)
             self.display.text = f"You win with {steps} shots"
             self.game_over = True
             self.display.show(self.player_board)
         if not player_board.ships:
-            pygame.mixer.music.load('lose.mp3')
+            pygame.mixer.music.load('assests/sounds/lose.mp3')
             pygame.mixer.music.play(0)
             self.display.text = f"You lost with {steps} shots"
             self.game_over = True
