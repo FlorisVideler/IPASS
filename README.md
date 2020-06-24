@@ -12,7 +12,7 @@ git clone https://github.com/FlorisVideler/IPASS
 
 ## Running the game
 
-To run the game itself, just shapely run the executable file!
+To run the game itself, just simply run the executable file!
 
 ## Built With
 
