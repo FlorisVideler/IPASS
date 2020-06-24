@@ -395,7 +395,7 @@ class PlayerBoard(Board):
             self.data["plot_grid"][f"{oldx};{oldy}"] = self.data["prev"]["plot_grid"][f"{oldx};{oldy}"]
             self.data["plot_grid"][f"{newx};{newy}"] = "select"
 
-    def selector_click(self, position: list) -> list:
+    def selector_click(self, position: tuple) -> list:
         """
         Returns the coordinate of the clicked tile
 
@@ -403,12 +403,16 @@ class PlayerBoard(Board):
         :return: List
         """
         rects = self.display.rects
+        print(position)
         for rect in rects:
             if rect.collidepoint(position):
+
                 index = rects.index(rect)
                 cord_string = list(self.data["plot_grid"].keys())[index]
                 cord = [int(cord_string.split(";")[0]), int(cord_string.split(";")[1])]
-                return cord
+                if self.data["plot_grid"][f"{cord[0]};{cord[1]}"] == "tile":
+                    return cord
+        return [0]
 
     def select_cord(self) -> list:
         """
@@ -445,7 +449,8 @@ class PlayerBoard(Board):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
                     cord = self.selector_click(pos)
-                    return cord
+                    if cord != [0]:
+                        return cord
 
 
 class AIBoard(Board):
@@ -581,7 +586,7 @@ class Display:
 
 
 class Game:
-    def __init__(self, display, ship_sizes=[5, 4, 3, 3, 2]):
+    def __init__(self, display, ai, ship_sizes=[5, 4, 3, 3, 2]):
         """
         Initiator for Game.
 
@@ -592,7 +597,14 @@ class Game:
         self.player_board = PlayerBoard(ship_sizes, self.display)
         self.ai_board = AIBoard(ship_sizes)
         self.game_over = False
-        self.AI = algortims.ProbabilityDensity(ship_sizes)
+        if ai == "1":
+            self.AI = algortims.Random(ship_sizes)
+        if ai == "2":
+            self.AI = algortims.HuntTarget(ship_sizes)
+        if ai == "3":
+            self.AI = algortims.HuntTargetParity(ship_sizes)
+        if ai == "4":
+            self.AI = algortims.ProbabilityDensity(ship_sizes)
 
     def ai_shoot(self):
         """
@@ -672,10 +684,19 @@ class Game:
 
 
 if __name__ == "__main__":
+    print("What algorithm do you want to use?\n"
+          "1: Random\n"
+          "2. Hunt/Target\n"
+          "3. Hunt/Target with parity\n"
+          "4. Probability Density")
+    ai = input(": ")
+    while ai not in ["1", "2", "3", "4"]:
+        print(f"{ai} is not accepted as input!")
+        ai = input(": ")
     while True:
         clock = pygame.time.Clock()
         d = Display()
-        game = Game(d)
+        game = Game(d, ai)
         game.play()
 
 # Out of bounds tiles can be selected
