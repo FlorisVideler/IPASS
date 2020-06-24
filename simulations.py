@@ -1,5 +1,5 @@
 import algortims
-import battleship_oo
+import battleship
 import json
 import time
 
@@ -7,7 +7,7 @@ import time
 class Simulation2:
     def __init__(self, ship_sizes):
         self.sizes = ship_sizes
-        self.ai_board = battleship_oo.AIBoard(self.sizes)
+        self.ai_board = battleship.AIBoard(self.sizes)
         self.json_data = {}
 
     def ai_shoot(self, AI, board, run, turns):
@@ -62,7 +62,7 @@ class Simulation:
         self.ship_sizes = ship_sizes
         self.write(50000)
 
-    def shoot(self, ai: algortims.Algorithm, board: battleship_oo.AIBoard):
+    def shoot(self, ai: algortims.Algorithm, board: battleship.AIBoard):
         cord = ai.turn()
         ai.result = board.shoot(cord)
 
@@ -80,7 +80,7 @@ class Simulation:
                 self.AI = algortims.HuntTargetParity(self.ship_sizes)
             elif algo == "prob":
                 self.AI = algortims.ProbabilityDensity(self.ship_sizes)
-            ai_board = battleship_oo.AIBoard(self.ship_sizes)
+            ai_board = battleship.AIBoard(self.ship_sizes)
             ai_board.place_ships()
             turns = 0
             while len(ai_board.ships) > 0:

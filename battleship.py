@@ -431,7 +431,7 @@ class PlayerBoard(Board):
         # self.selector(newx, newy, oldx, oldy, True)
         while not selected:
             if (-1 < newx < 10) and (-1 < newy < 10):
-                #self.selector(newx, newy, oldx, oldy)
+                # self.selector(newx, newy, oldx, oldy)
                 self.display.show(self)
                 oldy = newy
                 oldx = newx
@@ -439,7 +439,7 @@ class PlayerBoard(Board):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         if self.data["prev"]["plot_grid"][f"{newx};{newy}"] == "tile":
-                            #return [newx, newy]
+                            # return [newx, newy]
                             pass
                     elif event.key == pygame.K_DOWN:
                         newy = oldy + 1
@@ -520,6 +520,7 @@ class Display:
         """
         Initiator for Display.
         """
+        print("DISPLAY INIT DONE")
         self.rects = []
         self.text = "begin text"
         pygame.init()
@@ -529,13 +530,16 @@ class Display:
         self.background = (0, 0, 0)
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.RESIZABLE)
         pygame.display.set_caption("Battleships")
-
+        print("DISPLAY INIT DONE")
         text = 'this text is editable'
-        self.font = pygame.font.SysFont(None, 30)
+        print("DISPLAY INIT DONE")
+        self.font = pygame.font.SysFont('broadway', 30)
+        print("DISPLAY INIT DONE")
         self.img = self.font.render(text, True, self.RED)
-
+        print("DISPLAY INIT DONE")
         self.rect = self.img.get_rect()
         self.rect.topleft = (20, 420)
+
 
     def show(self, player_board: Board, w: int = None, h: int = None):
         """
@@ -585,10 +589,19 @@ class Display:
         self.screen = pygame.display.set_mode((w, h),
                                               pygame.RESIZABLE)
 
-    def show_text(self, text):
-        myfont = pygame.font.SysFont('Comic Sans MS', 30)
-        textsurface = myfont.render(text, True, (250, 250, 250))
-        self.screen.blit(textsurface, (0, 450))
+    def pick_algorithm(self):
+        font = pygame.font.SysFont('broadway', 30)
+        lines = ["Pick an algorithm to battle against!", "1. Random", "2. Hunt/Target", "3. Hunt/Target with parity", "4. Probability Density"]
+        labels = []
+        for line in lines:
+            labels.append(font.render(line, True, self.RED))
+        i = 0
+        for label in labels:
+            rect = label.get_rect()
+            rect.topleft = (20, 20+(30*i))
+            self.screen.blit(label, rect)
+            i += 1
+        pygame.display.update()
 
 
 class Game:
@@ -603,14 +616,43 @@ class Game:
         self.player_board = PlayerBoard(ship_sizes, self.display)
         self.ai_board = AIBoard(ship_sizes)
         self.game_over = False
+        self.AI = self.pick_algorithm(ship_sizes)
+
+    def pick_algorithm(self, ship_sizes: list) -> algortims.Algorithm:
+        """
+        Returns what algorithm to use based on user input.
+        :param ship_sizes: List
+        :return: Algorithm object
+        """
+        self.display.pick_algorithm()
+        ai_set = False
+        ai = "1"
+        while not ai_set:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    # if event.key == pygame.K_RETURN:
+                    #     ai_set = True
+                    if event.key == pygame.K_1:
+                        ai = "1"
+                        ai_set = True
+                    if event.key == pygame.K_2:
+                        ai = "2"
+                        ai_set = True
+                    if event.key == pygame.K_3:
+                        ai = "3"
+                        ai_set = True
+                    if event.key == pygame.K_4:
+                        ai = "4"
+                        ai_set = True
         if ai == "1":
-            self.AI = algortims.Random(ship_sizes)
+            return algortims.Random(ship_sizes)
         if ai == "2":
-            self.AI = algortims.HuntTarget(ship_sizes)
+            return algortims.HuntTarget(ship_sizes)
         if ai == "3":
-            self.AI = algortims.HuntTargetParity(ship_sizes)
+            return algortims.HuntTargetParity(ship_sizes)
         if ai == "4":
-            self.AI = algortims.ProbabilityDensity(ship_sizes)
+            return algortims.ProbabilityDensity(ship_sizes)
+        return algortims.Random(ship_sizes)
 
     def ai_shoot(self):
         """
@@ -644,10 +686,11 @@ class Game:
         The game setup and main loop.
         """
         self.display.show(self.player_board)
-        self.display.text = "Set up your ships, you can move your ships with the arrow keys and rotate them with the r key"
+        self.display.text = "Set up your ships"
         self.player_board.place_ships()
         self.ai_board.place_ships()
         i = 0
+
         while not self.game_over:
             # self.display.show_text(str(i))
             self.display.text = "Use the the mouse to choose where to attack"
@@ -710,19 +753,12 @@ class Game:
 
 
 if __name__ == "__main__":
-    print("What algorithm do you want to use?\n"
-          "1: Random\n"
-          "2. Hunt/Target\n"
-          "3. Hunt/Target with parity\n"
-          "4. Probability Density")
-    ai = input(": ")
-    while ai not in ["1", "2", "3", "4"]:
-        print(f"{ai} is not accepted as input!")
-        ai = input(": ")
+    print("MAIN")
     while True:
-        clock = pygame.time.Clock()
+        print("LOOP STARTED")
         d = Display()
-        game = Game(d, ai)
+        print("DISPLAY SET")
+        game = Game(d, "1")
         game.play()
 
 # Out of bounds tiles can be selected

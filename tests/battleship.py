@@ -1,5 +1,5 @@
 import unittest
-from battleship_oo import *
+from battleship import *
 
 
 class TestShip(unittest.TestCase):
