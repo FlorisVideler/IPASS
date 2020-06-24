@@ -4,72 +4,34 @@ import json
 import time
 
 
-class Simulation2:
-    def __init__(self, ship_sizes):
-        self.sizes = ship_sizes
-        self.ai_board = battleship.AIBoard(self.sizes)
-        self.json_data = {}
-
-    def ai_shoot(self, AI, board, run, turns):
-        cord = AI.turn()
-        self.add_shot(cord, run, turns)
-        AI.result = board.shoot(cord)
-
-    def simulation_game_loop(self, run):
-        AI = algortims.HuntTarget([5, 4, 3, 2])
-        self.ai_board.reset()
-        # print(self.sizes)
-        self.ai_board.ship_sizes = [5, 4, 3, 2]
-        self.ai_board.place_ships()
-        game_over = False
-        turns = 0
-        while not game_over:
-            turns += 1
-            self.ai_shoot(AI, self.ai_board, run, turns)
-            if not self.ai_board.ships:
-                game_over = True
-        self.add_result(run, turns)
-        # print(turns)
-
-    def add_run(self, run):
-        self.json_data[run] = {}
-        self.json_data[run]["shots"] = {}
-        self.json_data[run]["turns"] = 0
-
-    def add_shot(self, cord, run, turn):
-        self.json_data[run]["shots"][turn] = cord
-
-    def add_result(self, run, result):
-        self.json_data[run]["turns"] = result
-
-    def write_data(self):
-        with open('ai_data.json', 'w') as aid:
-            aid.write(json.dumps(self.json_data, indent=4))
-
-    def run(self, times):
-        print(f"Running simulation {times} times:")
-        for i in range(1, times + 1):
-            self.add_run(i)
-            self.simulation_game_loop(i)
-            # print(i)
-        self.write_data()
-        pass
-
-
 class Simulation:
-    def __init__(self, ship_sizes):
+    def __init__(self, ship_sizes: list, i: int):
+        """
+        Initiator for Simulation.
+        :param ship_sizes: List
+        """
         self.AI = None
         self.ship_sizes = ship_sizes
-        self.write(50000)
+        self.write(i)
 
     def shoot(self, ai: algortims.Algorithm, board: battleship.AIBoard):
+        """
+        Shoots shot at board.
+        :param ai: Algorithm object
+        :param board: Board object
+        """
         cord = ai.turn()
         ai.result = board.shoot(cord)
 
-    def simulate(self, algo):
+    def simulate(self, algo: str, i: int):
+        """
+        Runs the actual simulations.
+        :param algo: String
+        :param i: Int
+        """
         total_turns = 0
 
-        for i in range(50000):
+        for i in range(i):
             self.ship_sizes = [5, 4, 3, 3]
             # print(self.ship_sizes)
             if algo == "random":
@@ -86,44 +48,62 @@ class Simulation:
             while len(ai_board.ships) > 0:
                 self.shoot(self.AI, ai_board)
                 turns += 1
-            self.write_append(turns, i, algo)
+            self.write_append(turns, algo)
             total_turns += turns
             if i % 10000 == 0:
                 print(i)
             # print(f"{i} -- took {turns} turns")
 
-        print(f"{algo} took {total_turns/50000} turns on average.")
+        print(f"{algo} took {total_turns/i} turns on average.")
 
-    def write(self, i):
+    def write(self, i: int):
+        """
+        Writes the amount of times the simulation is going to run to the data file.
+        :param i: Int
+        """
         data = {"runs": i}
-        with open('JSON/data644333.json', 'w') as outfile:
+        with open('JSON/data6443332222.json', 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
-    def write_append(self, turns, run, algo):
-        with open('JSON/data644333.json') as json_file:
+    def write_append(self, turns: int, algo: str):
+        """
+        appends each game to the file
+        :param turns: Int
+        :param algo: String
+        """
+        with open('JSON/data6443332222.json') as json_file:
             data = json.load(json_file)
         if algo not in data:
             data[algo] = []
         data[algo].append(turns)
-        with open('JSON/data644333.json', 'w') as outfile:
+        with open('JSON/data6443332222.json', 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
 
 def main():
-    ship_sizes = [6, 4, 4, 3, 3, 3]
+    """
+    Runs the simulations.
+    """
+    # Set all the ship sizes
+    ship_sizes = [6, 4, 4, 3, 3, 3, 2, 2, 2, 2]
+
+    times = 50000
 
     algortims_names = ["random", "hunttarget", "hunttargetparity", "prob"]
 
     print("Using default ship sizes", ship_sizes)
-    print("Running all the algorithms 50000 times")
+    print(f"Running all the algorithms {times} times")
 
-    simulation = Simulation(ship_sizes)
+    simulation = Simulation(ship_sizes, times)
 
     for i in algortims_names:
-        simulation.simulate(i)
+        simulation.simulate(i, times)
 
 
 if __name__ == "__main__":
+    """
+    This is run when the program starts. It times the simulation.
+    """
     start_time = time.time()
     main()
     print("--- %s seconds ---" % (time.time() - start_time))
