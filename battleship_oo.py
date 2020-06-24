@@ -646,13 +646,18 @@ class Game:
             # self.display.show_text(str(i))
             self.display.text = "Use the arrow keys to choose where to attack"
             self.player_shoot()
+            i += 1
             self.ai_shoot()
-            self.check_ships(self.ai_board, self.player_board)
+
+            self.check_ships(self.ai_board, self.player_board, i)
 
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         pass
+
+                if self.game_over:
+                    print("GAME OVER toch?")
 
                 if event.type == pygame.VIDEORESIZE:
                     # There's some code to add back window content here.
@@ -660,27 +665,35 @@ class Game:
                     width = event.w
                     height = int(width / 2)
                     # print("width:", width, "| height:", height)
-                    self.check_ships(self.ai_board, self.player_board)
+                    self.check_ships(self.ai_board, self.player_board, i)
                     self.display.show(self.player_board, width, height)
                 else:
-                    self.check_ships(self.ai_board, self.player_board)
+                    self.check_ships(self.ai_board, self.player_board, i)
                     self.display.show(self.player_board)
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
             # pygame.time.delay(1000)
             # self.check_ships(self.ai_board, self.player_board)
             # self.display.show(self.player_board)
 
-    def check_ships(self, ai_board: Board, player_board: Board):
+    def check_ships(self, ai_board: Board, player_board: Board, steps: int):
         """
         Checks if there are still ships on the board.
         :param ai_board: AIBoard
         :param player_board: PlayerBoard
+        :param steps: Int
         """
         if not ai_board.ships:
-            self.display.show_text("YOU WIN")
+            self.display.text = f"You in with {steps} shots"
             self.game_over = True
+            self.display.show(self.player_board)
         if not player_board.ships:
-            self.display.show_text("YOU LOSE")
+            self.display.text = f"You in with {steps} shots"
             self.game_over = True
+            self.display.show(self.player_board)
 
 
 if __name__ == "__main__":
