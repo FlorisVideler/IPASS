@@ -687,11 +687,15 @@ class Game:
         :param steps: Int
         """
         if not ai_board.ships:
-            self.display.text = f"You in with {steps} shots"
+            pygame.mixer.music.load('win.mp3')
+            pygame.mixer.music.play(0)
+            self.display.text = f"You win with {steps} shots"
             self.game_over = True
             self.display.show(self.player_board)
         if not player_board.ships:
-            self.display.text = f"You in with {steps} shots"
+            pygame.mixer.music.load('lose.mp3')
+            pygame.mixer.music.play(0)
+            self.display.text = f"You lost with {steps} shots"
             self.game_over = True
             self.display.show(self.player_board)
 
@@ -724,4 +728,3 @@ if __name__ == "__main__":
 # Selector spawns near last shot
 # Better OO
 # Make input loop function
-# Add simulation mode
