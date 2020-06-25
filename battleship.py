@@ -1,7 +1,6 @@
 import pygame
 import random
 import algortims
-import time
 
 
 class Ship:
@@ -188,7 +187,6 @@ class Board:
         if rotate and overlap:
             return True
         if overlap:
-            # print("OVERLAP")
             deltax = abs(ship.cords[0][0] - cords[0][0])
             deltay = abs(ship.cords[0][1] - cords[0][1])
             new_cords = []
@@ -214,8 +212,6 @@ class Board:
                     for cord in cords:
                         x, y = cord
                         new_cords.append([x, y + 1])
-            # print(False, new_cords)
-            # if not self.overlap_cords(ship, new_cords):
             return False, new_cords
         return False
 
@@ -275,9 +271,6 @@ class Board:
         for i in self.ship_sizes:
             self.place_ship(i)
 
-    # def place_ship(self, length):
-    #     pass
-
     def hit(self, cord: list) -> (bool, int):
         """
         Returns whether the guess was a hit or not and if a ship was destroyed also return what the length of the
@@ -290,7 +283,6 @@ class Board:
             if cord in ship.cords:
                 ship.hits += 1
                 if ship.hits == ship.length:
-                    # print(f"DESTROYED {ship.length}")
                     self.ships.remove(ship)
                     return True, ship.length
                 return True, 0
@@ -393,7 +385,7 @@ class PlayerBoard(Board):
             self.data["prev"]["plot_grid"][f"0;0"] = self.data["plot_grid"][f"0;0"]
             self.data["plot_grid"][f"0;0"] = "select"
         if newx != oldx or newy != oldy:
-            # selector is verplaatst
+            # Selector has moved
             self.data["prev"]["plot_grid"][f"{newx};{newy}"] = self.data["plot_grid"][f"{newx};{newy}"]
             self.data["plot_grid"][f"{oldx};{oldy}"] = self.data["prev"]["plot_grid"][f"{oldx};{oldy}"]
             self.data["plot_grid"][f"{newx};{newy}"] = "select"
@@ -406,7 +398,6 @@ class PlayerBoard(Board):
         :return: List
         """
         rects = self.display.rects
-        print(position)
         for rect in rects:
             if rect.collidepoint(position):
 
@@ -428,10 +419,8 @@ class PlayerBoard(Board):
         oldx = 0
         oldy = 0
         selected = False
-        # self.selector(newx, newy, oldx, oldy, True)
         while not selected:
             if (-1 < newx < 10) and (-1 < newy < 10):
-                # self.selector(newx, newy, oldx, oldy)
                 self.display.show(self)
                 oldy = newy
                 oldx = newx
@@ -439,7 +428,6 @@ class PlayerBoard(Board):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         if self.data["prev"]["plot_grid"][f"{newx};{newy}"] == "tile":
-                            # return [newx, newy]
                             pass
                     elif event.key == pygame.K_DOWN:
                         newy = oldy + 1
@@ -479,7 +467,6 @@ class AIBoard(Board):
         cords = self.random_cords(length)
         while self.overlap_cords(ship, cords):
             cords = self.random_cords(length)
-        # print(cords)
         ship.cords = cords
         ship.draw(cords)
 
@@ -505,22 +492,12 @@ class AIBoard(Board):
                 # vert
         return cords
 
-    # def shoot(self, cord):
-    #     x, y = cord
-    #     if self.hit(cord):
-    #         self.data["shoot_grid"][f"{x};{y}"] = "hit"
-    #         return True
-    #     else:
-    #         self.data["shoot_grid"][f"{x};{y}"] = "miss"
-    #         return False
-
 
 class Display:
     def __init__(self):
         """
         Initiator for Display.
         """
-        print("DISPLAY INIT DONE")
         self.rects = []
         self.text = "begin text"
         pygame.init()
@@ -530,7 +507,6 @@ class Display:
         self.background = (10, 10, 10)
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.RESIZABLE)
         pygame.display.set_caption("Battleships")
-        print("DISPLAY INIT DONE")
         self.font = pygame.font.SysFont('rockwellvet', 30)
         self.img = self.font.render(self.text, True, self.text_color)
         self.rect = self.img.get_rect()
@@ -572,7 +548,6 @@ class Display:
                 pygame.draw.rect(self.screen, data["colors"][plot_grid[f"{i - 12};{j}"]], tile)
                 self.rects.append(tile)
 
-        # pygame.display.flip()
         pygame.display.update()
 
         if w is None or h is None:
@@ -587,7 +562,8 @@ class Display:
 
     def pick_algorithm(self):
         font = pygame.font.SysFont('rockwellvet', 30)
-        lines = ["Pick an algorithm to battle against!", "1. Random (easy)", "2. Hunt/Target (medium)", "3. Hunt/Target with parity (hard)", "4. Probability Density (hardest)"]
+        lines = ["Pick an algorithm to battle against!", "1. Random (easy)", "2. Hunt/Target (medium)",
+                 "3. Hunt/Target with parity (hard)", "4. Probability Density (hardest)"]
         labels = []
         for line in lines:
             labels.append(font.render(line, True, self.text_color))
@@ -626,8 +602,6 @@ class Game:
         while not ai_set:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
-                    # if event.key == pygame.K_RETURN:
-                    #     ai_set = True
                     if event.key == pygame.K_1:
                         ai = "1"
                         ai_set = True
@@ -656,10 +630,6 @@ class Game:
         """
         cord = self.AI.turn()
         self.AI.result = self.player_board.shoot(cord)
-        # x, y = random.randrange(10), random.randrange(10)
-        # while not self.player_board.shot_available([x, y]):
-        #     x, y = random.randrange(10), random.randrange(10)
-        # result = self.player_board.shoot([x, y])
 
     def player_shoot(self):
         """
@@ -688,7 +658,6 @@ class Game:
         i = 0
 
         while not self.game_over:
-            # self.display.show_text(str(i))
             self.display.text = "Use the the mouse to choose where to attack"
             self.player_shoot()
             i += 1
@@ -701,15 +670,10 @@ class Game:
                     if event.key == pygame.K_RETURN:
                         pass
 
-                if self.game_over:
-                    print("GAME OVER toch?")
-
                 if event.type == pygame.VIDEORESIZE:
                     # There's some code to add back window content here.
-                    # print("eventwidth:", event.w, "| eventheight:", event.h)
                     width = event.w
                     height = int(width / 2)
-                    # print("width:", width, "| height:", height)
                     self.check_ships(self.ai_board, self.player_board, i)
                     self.display.show(self.player_board, width, height)
                 else:
@@ -723,9 +687,6 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
-            # pygame.time.delay(1000)
-            # self.check_ships(self.ai_board, self.player_board)
-            # self.display.show(self.player_board)
 
     def check_ships(self, ai_board: Board, player_board: Board, steps: int):
         """
@@ -749,11 +710,8 @@ class Game:
 
 
 if __name__ == "__main__":
-    print("MAIN")
     while True:
-        print("LOOP STARTED")
         d = Display()
-        print("DISPLAY SET")
         game = Game(d)
         game.play()
 
