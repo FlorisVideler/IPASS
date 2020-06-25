@@ -138,7 +138,7 @@ class Board:
         self.data["colors"] = {}
         self.data["colors"]["tile"] = (0, 0, 200)
         self.data["colors"]["hit"] = (200, 0, 0)
-        self.data["colors"]["ship"] = (10, 10, 10)
+        self.data["colors"]["ship"] = (175, 175, 175)
         self.data["colors"]["select"] = (168, 235, 52)
         self.data["colors"]["miss"] = (52, 235, 232)
 
@@ -524,19 +524,15 @@ class Display:
         self.rects = []
         self.text = "begin text"
         pygame.init()
-        self.RED = (255, 0, 0)
+        self.text_color = (52, 235, 232)
         self.SCREEN_WIDTH = 1000
         self.SCREEN_HEIGHT = 500
-        self.background = (0, 0, 0)
+        self.background = (10, 10, 10)
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.RESIZABLE)
         pygame.display.set_caption("Battleships")
         print("DISPLAY INIT DONE")
-        text = 'this text is editable'
-        print("DISPLAY INIT DONE")
-        self.font = pygame.font.SysFont('broadway', 30)
-        print("DISPLAY INIT DONE")
-        self.img = self.font.render(text, True, self.RED)
-        print("DISPLAY INIT DONE")
+        self.font = pygame.font.SysFont('rockwellvet', 30)
+        self.img = self.font.render(self.text, True, self.text_color)
         self.rect = self.img.get_rect()
         self.rect.topleft = (20, 420)
 
@@ -549,7 +545,7 @@ class Display:
         :param w: Int
         :param h: Int
         """
-        img = self.font.render(self.text, True, self.RED)
+        img = self.font.render(self.text, True, self.text_color)
         self.rect.size = img.get_size()
         self.rect.size = self.img.get_size()
         self.rect.topleft = (20, self.SCREEN_HEIGHT * 0.84)
@@ -590,11 +586,11 @@ class Display:
                                               pygame.RESIZABLE)
 
     def pick_algorithm(self):
-        font = pygame.font.SysFont('broadway', 30)
-        lines = ["Pick an algorithm to battle against!", "1. Random", "2. Hunt/Target", "3. Hunt/Target with parity", "4. Probability Density"]
+        font = pygame.font.SysFont('rockwellvet', 30)
+        lines = ["Pick an algorithm to battle against!", "1. Random (easy)", "2. Hunt/Target (medium)", "3. Hunt/Target with parity (hard)", "4. Probability Density (hardest)"]
         labels = []
         for line in lines:
-            labels.append(font.render(line, True, self.RED))
+            labels.append(font.render(line, True, self.text_color))
         i = 0
         for label in labels:
             rect = label.get_rect()
@@ -605,7 +601,7 @@ class Display:
 
 
 class Game:
-    def __init__(self, display, ai, ship_sizes=[5, 4, 3, 3, 2]):
+    def __init__(self, display, ship_sizes=[5, 4, 3, 3, 2]):
         """
         Initiator for Game.
 
@@ -758,7 +754,7 @@ if __name__ == "__main__":
         print("LOOP STARTED")
         d = Display()
         print("DISPLAY SET")
-        game = Game(d, "1")
+        game = Game(d)
         game.play()
 
 # Out of bounds tiles can be selected
