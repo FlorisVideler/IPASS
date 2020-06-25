@@ -32,7 +32,7 @@ class Simulation:
         total_turns = 0
 
         for i in range(i):
-            self.ship_sizes = [5, 4, 3, 3]
+            self.ship_sizes = [6, 4, 4, 3, 3, 3, 2, 2, 2, 2]
             # print(self.ship_sizes)
             if algo == "random":
                 self.AI = algortims.Random(self.ship_sizes)
