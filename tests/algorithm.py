@@ -32,6 +32,7 @@ class HuntTargetTest(unittest.TestCase):
         self.algorithm.last_guess = [4, 5]
         self.algorithm.turn()
         self.assertNotIn([4, 4], self.algorithm.potential_targets)
+
     pass
 
 
@@ -40,7 +41,7 @@ class HuntTargetParityTest(unittest.TestCase):
     algorithm = HuntTargetParity(ships)
 
     def test_parity_grid(self):
-        self.assertNotIn([0,0], self.algorithm.parity_grid)
+        self.assertNotIn([0, 0], self.algorithm.parity_grid)
 
 
 class ProbabilityDensityTest(unittest.TestCase):
@@ -71,7 +72,6 @@ class RandomTest(unittest.TestCase):
         for i in self.need_to_guess:
             with self.subTest(i=i):
                 self.assertIn(self.algorithm.turn(), self.need_to_guess)
-
 
 
 if __name__ == '__main__':
