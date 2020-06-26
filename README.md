@@ -14,6 +14,10 @@ git clone https://github.com/FlorisVideler/IPASS
 
 To run the game itself, just simply run the executable file!
 
+## Controls
+
+The controls of the game are really easy. Use the numbers to select an algorithm. Place your ships with the return key, move them with the arrow keys and rotate them with the "r" key. When shooting at ships use your mouse and click where you want to shoot.
+
 ## Built With
 
 * [pygame](https://www.pygame.org/) - The framework used to make the game
