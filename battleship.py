@@ -1,6 +1,7 @@
 import pygame
 import random
 import algortims
+import sys
 
 
 class Ship:
@@ -405,7 +406,7 @@ class PlayerBoard(Board):
                         return cord
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    exit()
+                    sys.exit()
 
 
 class AIBoard(Board):
@@ -642,12 +643,12 @@ class Game:
                     self.display.show(self.player_board)
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    exit()
+                    sys.exit()
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    exit()
+                    sys.exit()
 
     def check_ships(self, ai_board: Board, player_board: Board, steps: int):
         """
