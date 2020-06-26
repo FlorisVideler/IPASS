@@ -2,7 +2,7 @@ import unittest
 from battleship import *
 
 
-class TestShip(unittest.TestCase):
+class ShipTest(unittest.TestCase):
     board = Board([3])
     ship = Ship(3, board)
 
@@ -21,7 +21,7 @@ class TestShip(unittest.TestCase):
         self.assertEqual(self.ship.cords, expected_ouput)
 
 
-class TestBoard(unittest.TestCase):
+class BoardTest(unittest.TestCase):
     board = Board([3])
 
     def test_out_of_bounds(self):
@@ -32,7 +32,7 @@ class TestBoard(unittest.TestCase):
         self.assertFalse(self.board.out_of_bounds(not_out_of_bounds))
 
 
-class TestPlayerBoard(unittest.TestCase):
+class PlayerBoardTest(unittest.TestCase):
     ship_sizes = [5, 4, 3, 3, 2]
     display = Display()
     player_board = PlayerBoard(ship_sizes, display)
@@ -42,7 +42,7 @@ class TestPlayerBoard(unittest.TestCase):
         self.assertEqual([0], self.player_board.selector_click(position_not_on_map))
 
 
-class TestAIBoard(unittest.TestCase):
+class AIBoardTest(unittest.TestCase):
     ship_sizes = [5, 4, 3, 3, 2]
     ai_board = AIBoard(ship_sizes)
 
