@@ -371,25 +371,6 @@ class PlayerBoard(Board):
                     pygame.quit()
                     exit()
 
-    def selector(self, newx: int, newy: int, oldx: int, oldy: int, first: bool = False):
-        """
-        Draws the selector in the data object
-
-        :param newx: Int
-        :param newy: Int
-        :param oldx: Int
-        :param oldy: Int
-        :param first: Boolean
-        """
-        if first:
-            self.data["prev"]["plot_grid"][f"0;0"] = self.data["plot_grid"][f"0;0"]
-            self.data["plot_grid"][f"0;0"] = "select"
-        if newx != oldx or newy != oldy:
-            # Selector has moved
-            self.data["prev"]["plot_grid"][f"{newx};{newy}"] = self.data["plot_grid"][f"{newx};{newy}"]
-            self.data["plot_grid"][f"{oldx};{oldy}"] = self.data["prev"]["plot_grid"][f"{oldx};{oldy}"]
-            self.data["plot_grid"][f"{newx};{newy}"] = "select"
-
     def selector_click(self, position: tuple) -> list:
         """
         Returns the coordinate of the clicked tile
@@ -414,29 +395,9 @@ class PlayerBoard(Board):
 
         :return: List
         """
-        newx = 0
-        newy = 0
-        oldx = 0
-        oldy = 0
-        selected = False
-        while not selected:
-            if (-1 < newx < 10) and (-1 < newy < 10):
-                self.display.show(self)
-                oldy = newy
-                oldx = newx
+        while True:
+            self.display.show(self)
             for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
-                        if self.data["prev"]["plot_grid"][f"{newx};{newy}"] == "tile":
-                            pass
-                    elif event.key == pygame.K_DOWN:
-                        newy = oldy + 1
-                    elif event.key == pygame.K_UP:
-                        newy = oldy - 1
-                    elif event.key == pygame.K_LEFT:
-                        newx = oldx - 1
-                    elif event.key == pygame.K_RIGHT:
-                        newx = oldx + 1
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
                     cord = self.selector_click(pos)
@@ -714,16 +675,3 @@ if __name__ == "__main__":
         d = Display()
         game = Game(d)
         game.play()
-
-# Out of bounds tiles can be selected
-
-# IDEAS:
-# Add title and under text to text function
-# Beter waits between turns
-# Text: EX: "AI: G-13.... HIT!"
-# Add numbers and letters to the board 1, 10 and a, j
-# Replace selector for outline or blinker
-# Add exit thingy
-# Selector spawns near last shot
-# Better OO
-# Make input loop function

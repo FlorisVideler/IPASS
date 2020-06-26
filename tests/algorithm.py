@@ -33,8 +33,6 @@ class HuntTargetTest(unittest.TestCase):
         self.algorithm.turn()
         self.assertNotIn([4, 4], self.algorithm.potential_targets)
 
-    pass
-
 
 class HuntTargetParityTest(unittest.TestCase):
     ships = [5, 4, 3, 3, 2]
