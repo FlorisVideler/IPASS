@@ -539,7 +539,7 @@ class Display:
 
 
 class Game:
-    def __init__(self, display, ship_sizes=[5, 4, 3, 3, 2]):
+    def __init__(self, display, ship_sizes):
         """
         Initiator for Game.
 
@@ -649,6 +649,10 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        print("enter")
+                        return True
 
     def check_ships(self, ai_board: Board, player_board: Board, steps: int):
         """
@@ -674,5 +678,7 @@ class Game:
 if __name__ == "__main__":
     while True:
         d = Display()
-        game = Game(d)
+        game = Game(d, [5, 4, 3, 3, 2])
         game.play()
+        del d
+        del game
