@@ -664,13 +664,13 @@ class Game:
         if not ai_board.ships:
             pygame.mixer.music.load('assests/sounds/win.mp3')
             pygame.mixer.music.play(0)
-            self.display.text = f"You win with {steps} shots"
+            self.display.text = f"You win with {steps} shots, press enter to play again"
             self.game_over = True
             self.display.show(self.player_board)
         if not player_board.ships:
             pygame.mixer.music.load('assests/sounds/lose.mp3')
             pygame.mixer.music.play(0)
-            self.display.text = f"You lost with {steps} shots"
+            self.display.text = f"You lost with {steps} shots, press enter to play again"
             self.game_over = True
             self.display.show(self.player_board)
 
